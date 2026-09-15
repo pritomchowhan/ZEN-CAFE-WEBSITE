@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { CONTACT_INFO } from '../data/cafeData';
 import {
   MapPin,
@@ -10,25 +10,10 @@ import {
   Facebook,
   Linkedin,
   ArrowUpRight,
-  Send,
-  CheckCircle2,
   Navigation,
 } from 'lucide-react';
 
 export const ContactView: React.FC = () => {
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    phone: '',
-    message: '',
-  });
-  const [submitted, setSubmitted] = useState(false);
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    setSubmitted(true);
-  };
-
   return (
     <div id="view-contact">
       {/* Page Hero */}
@@ -239,7 +224,7 @@ export const ContactView: React.FC = () => {
             </div>
           </div>
 
-          {/* Right Column: Google Maps Interactive Card & Get in Touch Form (NO Reserve a table) */}
+          {/* Right Column: Google Maps Interactive Card */}
           <div className="lg:col-span-6 space-y-8">
             {/* Google Maps Visual Card */}
             <div className="bg-[#ede6d6] rounded overflow-hidden shadow-lg border border-[#262f1f]/15">
@@ -281,109 +266,6 @@ export const ContactView: React.FC = () => {
               </div>
             </div>
 
-            {/* Send a Message / Inquire Form (Replaces reservation form) */}
-            <div className="bg-[#ede6d6] p-6 sm:p-8 rounded shadow-sm border border-[#262f1f]/10 space-y-6">
-              <div>
-                <div className="eyebrow">Get in touch</div>
-                <h3 className="font-serif-title text-2xl font-bold text-[#1b2317] mt-1">
-                  Send us a message
-                </h3>
-                <p className="text-xs text-[#5f5b48] mt-1">
-                  Have a question about our seasonal menu, catering, or student study visits? Drop us a note.
-                </p>
-              </div>
-
-              {submitted ? (
-                <div className="p-6 bg-[#d8c79e] rounded flex items-start gap-4">
-                  <CheckCircle2 className="w-6 h-6 text-emerald-800 shrink-0 mt-0.5" />
-                  <div>
-                    <h4 className="font-serif-title font-bold text-lg text-[#1b2317]">Thank you for reaching out!</h4>
-                    <p className="text-xs text-[#262f1f] mt-1 leading-relaxed">
-                      We have received your message and will get back to you via email or phone ({formData.phone || 'provided'}) shortly.
-                    </p>
-                    <button
-                      onClick={() => setSubmitted(false)}
-                      className="mt-4 text-xs font-bold uppercase tracking-wider text-[#a67c52] underline"
-                    >
-                      Send another message
-                    </button>
-                  </div>
-                </div>
-              ) : (
-                <form id="contact-inquiry-form" onSubmit={handleSubmit} className="space-y-4">
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div className="space-y-1.5">
-                      <label htmlFor="inquiry-name" className="text-xs font-bold uppercase tracking-wider text-[#a67c52] block">
-                        Your Name
-                      </label>
-                      <input
-                        id="inquiry-name"
-                        type="text"
-                        required
-                        value={formData.name}
-                        onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                        placeholder="John Doe"
-                        className="w-full px-4 py-2.5 bg-[#ede6d6] border border-[#262f1f]/20 rounded text-sm focus:outline-none focus:border-[#a67c52]"
-                      />
-                    </div>
-
-                    <div className="space-y-1.5">
-                      <label htmlFor="inquiry-phone" className="text-xs font-bold uppercase tracking-wider text-[#a67c52] block">
-                        Phone Number
-                      </label>
-                      <input
-                        id="inquiry-phone"
-                        type="tel"
-                        required
-                        value={formData.phone}
-                        onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                        placeholder="+880 1XXX-XXXXXX"
-                        className="w-full px-4 py-2.5 bg-[#ede6d6] border border-[#262f1f]/20 rounded text-sm focus:outline-none focus:border-[#a67c52]"
-                      />
-                    </div>
-                  </div>
-
-                  <div className="space-y-1.5">
-                    <label htmlFor="inquiry-email" className="text-xs font-bold uppercase tracking-wider text-[#a67c52] block">
-                      Email Address
-                    </label>
-                    <input
-                      id="inquiry-email"
-                      type="email"
-                      required
-                      value={formData.email}
-                      onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                      placeholder="you@domain.com"
-                      className="w-full px-4 py-2.5 bg-[#ede6d6] border border-[#262f1f]/20 rounded text-sm focus:outline-none focus:border-[#a67c52]"
-                    />
-                  </div>
-
-                  <div className="space-y-1.5">
-                    <label htmlFor="inquiry-message" className="text-xs font-bold uppercase tracking-wider text-[#a67c52] block">
-                      Message / Question
-                    </label>
-                    <textarea
-                      id="inquiry-message"
-                      required
-                      rows={4}
-                      value={formData.message}
-                      onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                      placeholder="Tell us what you'd like to ask or share with Zen Cafe..."
-                      className="w-full px-4 py-2.5 bg-[#ede6d6] border border-[#262f1f]/20 rounded text-sm focus:outline-none focus:border-[#a67c52] resize-none"
-                    />
-                  </div>
-
-                  <button
-                    type="submit"
-                    id="inquiry-submit-btn"
-                    className="btn btn-solid w-full justify-center text-xs py-3"
-                  >
-                    <Send className="w-3.5 h-3.5" />
-                    <span>Send Message</span>
-                  </button>
-                </form>
-              )}
-            </div>
           </div>
         </div>
       </section>

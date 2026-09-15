@@ -2,14 +2,14 @@ import { MenuItem, JournalPost, TimelineItem, GalleryItem } from '../types';
 
 export const CONTACT_INFO = {
   address: "Kuratoli, Kuril AIUB Gate, Dhaka, Bangladesh",
-  email: "contact@company.com",
+  email: "zencafe1119@gmail.com",
   phone: "01674161122",
   phoneFormatted: "+880 1674-161122",
   whatsappNumber: "01674161122",
   whatsappUrl: "https://wa.me/8801674161122",
   instagramUrl: "https://www.instagram.com/zencafe1119?stkn=MTA1ZWFsZzhwYnE1Yg==",
   facebookUrl: "https://www.facebook.com/share/19NBuMM5aL/",
-  linkedinStatus: "I will add later",
+  linkedinStatus: "COMMING SOON",
   googleMapsUrl: "https://maps.app.goo.gl/UfPPFQo2Mo1EB7z2A",
   hours: "Daily · 9 AM — 10 PM",
   closedDay: "Saturday",
