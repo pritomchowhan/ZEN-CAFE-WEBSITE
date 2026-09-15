@@ -7,29 +7,40 @@ interface ContactRequest {
   website?: unknown;
 }
 
-const json = (body: Record<string, string>, status = 200) =>
-  new Response(JSON.stringify(body), {
-    status,
-    headers: { 'Content-Type': 'application/json' },
-  });
+interface VercelRequest {
+  method?: string;
+  body?: unknown;
+}
 
-export default async function handler(request: Request): Promise<Response> {
+interface VercelResponse {
+  status: (code: number) => VercelResponse;
+  json: (body: Record<string, string>) => void;
+}
+
+const sendJson = (response: VercelResponse, body: Record<string, string>, status = 200) => {
+  response.status(status).json(body);
+};
+
+export default async function handler(request: VercelRequest, response: VercelResponse): Promise<void> {
   if (request.method !== 'POST') {
-    return json({ error: 'Method not allowed.' }, 405);
+    sendJson(response, { error: 'Method not allowed.' }, 405);
+    return;
   }
 
   const resendApiKey = process.env.RESEND_API_KEY;
   const recipientEmail = process.env.CONTACT_RECIPIENT_EMAIL || 'zencafe1119@gmail.com';
 
   if (!resendApiKey) {
-    return json({ error: 'Email service is not configured.' }, 500);
+    sendJson(response, { error: 'Email service is not configured.' }, 500);
+    return;
   }
 
   let body: ContactRequest;
   try {
-    body = await request.json() as ContactRequest;
+    body = typeof request.body === 'string' ? JSON.parse(request.body) as ContactRequest : request.body as ContactRequest;
   } catch {
-    return json({ error: 'Invalid request.' }, 400);
+    sendJson(response, { error: 'Invalid request.' }, 400);
+    return;
   }
 
   const name = typeof body.name === 'string' ? body.name.trim() : '';
@@ -40,38 +51,46 @@ export default async function handler(request: Request): Promise<Response> {
   const website = typeof body.website === 'string' ? body.website.trim() : '';
 
   if (website) {
-    return json({ message: 'Message received.' });
+    sendJson(response, { message: 'Message received.' });
+    return;
   }
 
   if (!name || !email || !message || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-    return json({ error: 'Please provide a valid name, email address, and message.' }, 400);
+    sendJson(response, { error: 'Please provide a valid name, email address, and message.' }, 400);
+    return;
   }
 
-  const emailResponse = await fetch('https://api.resend.com/emails', {
-    method: 'POST',
-    headers: {
-      Authorization: `Bearer ${resendApiKey}`,
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      from: process.env.CONTACT_FROM_EMAIL || 'Zen Cafe Website <onboarding@resend.dev>',
-      to: [recipientEmail],
-      reply_to: email,
-      subject: `New Zen Cafe message from ${name}`,
-      text: [
-        `Name: ${name}`,
-        `Email: ${email}`,
-        `Phone: ${phone || 'Not provided'}`,
-        `Message for: ${founder}`,
-        '',
-        message,
-      ].join('\n'),
-    }),
-  });
+  try {
+    const emailResponse = await fetch('https://api.resend.com/emails', {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${resendApiKey}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        from: process.env.CONTACT_FROM_EMAIL || 'Zen Cafe Website <onboarding@resend.dev>',
+        to: [recipientEmail],
+        reply_to: email,
+        subject: `New Zen Cafe message from ${name}`,
+        text: [
+          `Name: ${name}`,
+          `Email: ${email}`,
+          `Phone: ${phone || 'Not provided'}`,
+          `Message for: ${founder}`,
+          '',
+          message,
+        ].join('\n'),
+      }),
+    });
 
-  if (!emailResponse.ok) {
-    return json({ error: 'Message could not be sent. Please try again.' }, 502);
+    if (!emailResponse.ok) {
+      sendJson(response, { error: 'Message could not be sent. Please try again.' }, 502);
+      return;
+    }
+  } catch {
+    sendJson(response, { error: 'Message could not be sent. Please try again.' }, 502);
+    return;
   }
 
-  return json({ message: 'Message sent successfully.' });
+  sendJson(response, { message: 'Message sent successfully.' });
 }
