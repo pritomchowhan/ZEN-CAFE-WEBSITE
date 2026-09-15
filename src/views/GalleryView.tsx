@@ -35,7 +35,7 @@ export const GalleryView: React.FC<GalleryViewProps> = ({ onSelectJuice }) => {
   return (
     <div id="view-gallery">
       {/* Page Hero */}
-      <section className="band-ink on-ink pt-36 pb-20">
+      <section className="band-ink on-ink page-hero-media pt-36 pb-20">
         <div className="wrap">
           <div className="text-xs uppercase tracking-[0.16em] text-[#c9b089] mb-4 font-semibold">
             Zen Cafe / Gallery
