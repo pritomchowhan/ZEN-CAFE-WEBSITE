@@ -78,6 +78,16 @@ main, footer, header {
   z-index: 1;
 }
 
+.site-header-fixed {
+  position: fixed !important;
+  top: 0;
+  right: 0;
+  left: 0;
+  z-index: 1000 !important;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}
+
 .reveal-on-scroll {
   opacity: 0;
   transform: translateY(20px);
