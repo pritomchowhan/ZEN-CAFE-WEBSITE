@@ -50,11 +50,16 @@ export const JuiceModal: React.FC<JuiceModalProps> = ({ item, onClose }) => {
         {/* Content Container */}
         <div className="md:w-1/2 p-6 md:p-8 flex flex-col justify-between">
           <div>
-            <div className="eyebrow mb-2">Zen Cafe Juice Bar</div>
+            <div className="eyebrow mb-2">Zen Cafe Menu</div>
             <h3 className="font-serif-title text-2xl md:text-3xl font-bold text-[#1b2317]">
               {item.name}
             </h3>
-            <p className="text-[#a67c52] font-semibold text-lg mt-1 font-mono">
+            {item.label && (
+              <span className="inline-flex mt-2 px-2.5 py-1 rounded bg-[#c9b089]/20 text-[#1b2317] text-[10px] font-bold uppercase tracking-wider">
+                {item.label}
+              </span>
+            )}
+            <p className="text-[#a67c52] font-semibold text-lg mt-3 font-mono">
               {item.price}
             </p>
 
@@ -81,11 +86,11 @@ export const JuiceModal: React.FC<JuiceModalProps> = ({ item, onClose }) => {
 
           <div className="mt-6 pt-4 border-t border-[#38301f]/10 flex items-center justify-between gap-3">
             <span className="text-[11px] text-[#5f5b48] italic">
-              Pressed fresh to order
+              Made fresh to order
             </span>
             <a
               id="modal-order-whatsapp-btn"
-              href={`${CONTACT_INFO.whatsappUrl}?text=Hello%20Zen%20Cafe,%20I'd%20like%20to%20know%20more%20about%20${encodeURIComponent(item.name)}`}
+              href={`${CONTACT_INFO.whatsappUrl}?text=Hello%20Zen%20Cafe,%20I'd%20like%20to%20order%20${encodeURIComponent(item.name)}`}
               target="_blank"
               rel="noopener noreferrer"
               className="btn btn-solid text-xs py-2 px-4 inline-flex items-center gap-2"

@@ -1,5 +1,6 @@
 import React from 'react';
 import { CONTACT_INFO } from '../data/cafeData';
+import { FounderContactForm } from '../components/FounderContactForm';
 import {
   MapPin,
   Phone,
@@ -8,7 +9,6 @@ import {
   MessageCircle,
   Instagram,
   Facebook,
-  Linkedin,
   ArrowUpRight,
   Navigation,
 } from 'lucide-react';
@@ -207,19 +207,6 @@ export const ContactView: React.FC = () => {
                   </div>
                 </a>
 
-                {/* LinkedIn */}
-                <div
-                  id="contact-social-linkedin"
-                  className="flex items-center gap-3 p-3 bg-[#ede6d6]/60 rounded border border-[#262f1f]/10 cursor-default"
-                >
-                  <div className="w-8 h-8 rounded-full bg-sky-100 text-sky-700 flex items-center justify-center">
-                    <Linkedin className="w-4 h-4" />
-                  </div>
-                  <div>
-                    <span className="text-xs font-bold text-[#1b2317] block">LinkedIn</span>
-                    <span className="text-[10px] text-[#a67c52] font-semibold italic">I will add later</span>
-                  </div>
-                </div>
               </div>
             </div>
           </div>
@@ -269,6 +256,8 @@ export const ContactView: React.FC = () => {
           </div>
         </div>
       </section>
+
+      <FounderContactForm />
     </div>
   );
 };

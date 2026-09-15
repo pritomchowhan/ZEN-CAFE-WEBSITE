@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
-import { ViewType, MenuItem } from '../types';
-import { MENU_ITEMS, CONTACT_INFO, JOURNAL_POSTS } from '../data/cafeData';
+import { ViewType, MenuItem, MenuCategory } from '../types';
+import { MENU_ITEMS, CONTACT_INFO } from '../data/cafeData';
 import { ArrowUpRight, Coffee, Sparkles, Home as HomeIcon, MapPin, ChevronRight } from 'lucide-react';
-import pritomImg from '../assets/images/pritom_portrait_1789240977742.jpg';
 
 interface HomeViewProps {
   onNavigate: (view: ViewType) => void;
@@ -10,12 +9,11 @@ interface HomeViewProps {
 }
 
 export const HomeView: React.FC<HomeViewProps> = ({ onNavigate, onSelectJuice }) => {
-  const [filter, setFilter] = useState<'all' | 'coffee' | 'juice'>('all');
+  const [filter, setFilter] = useState<'all' | MenuCategory>('all');
 
-  // Preview items for home
   const previewItems = MENU_ITEMS.filter((item) => {
     if (filter === 'all') {
-      return ['cappuccino', 'espresso', 'ripe-mango-shake', 'raw-mango-juice', 'dragon-fruit-juice', 'malta-juice'].includes(item.id);
+      return ['cappuccino', 'dragon-fruit-juice', 'raw-mango-juice', 'chai', 'avocado-toast', 'cheesecake-slice'].includes(item.id);
     }
     return item.category === filter;
   }).slice(0, 6);
@@ -23,29 +21,33 @@ export const HomeView: React.FC<HomeViewProps> = ({ onNavigate, onSelectJuice })
   return (
     <div id="view-home" className="space-y-0">
       {/* ================= HERO SECTION ================= */}
-      <section id="home-hero-section" className="band-ink on-ink pt-36 pb-24 overflow-hidden relative">
-        <div
-          className="absolute inset-0 pointer-events-none"
-          style={{
-            background:
-              'radial-gradient(60% 50% at 82% 12%, rgba(201,166,104,0.18), transparent 60%), radial-gradient(50% 60% at 100% 100%, rgba(201,166,104,0.12), transparent 60%)',
-          }}
-        />
-        <div className="wrap relative grid grid-cols-1 lg:grid-cols-12 gap-10 items-end">
-          {/* Hero Left Column */}
-          <div className="lg:col-span-7 space-y-6">
-            <div className="eyebrow">Kuratoli · Kuril AIUB Gate · Dhaka</div>
-            <h1 className="font-serif-title text-5xl sm:text-6xl lg:text-7xl font-normal leading-[1.05] tracking-tight">
+      <section id="home-hero-section" className="relative overflow-hidden pt-32 pb-20 md:pt-36 md:pb-24 hero-premium-shell">
+        <div className="absolute inset-0">
+          <div
+            className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-80 scale-105"
+            style={{
+              backgroundImage: "url('/picture_1st.png')",
+              filter: 'brightness(0.52) saturate(0.9)',
+            }}
+          />
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,_rgba(201,176,137,0.22),_transparent_28%),linear-gradient(90deg,_rgba(20,28,20,0.8),_rgba(20,28,20,0.68),_rgba(20,28,20,0.78))]" />
+        </div>
+
+        <div className="wrap relative z-10 pt-8 md:pt-14">
+          <div className="max-w-4xl reveal-on-scroll">
+            <div className="eyebrow mb-5">Kuratoli · Kuril AIUB Gate · Dhaka</div>
+            <h1 className="font-serif-title text-5xl sm:text-6xl lg:text-7xl font-normal leading-[0.96] tracking-tight hero-heading text-[#f8f3ea]">
               Pause.<br />
               Breathe.<br />
-              <span className="italic text-[#c9b089]">Stay.</span>
+              <span className="italic text-[#d7ba8c]">Stay.</span>
             </h1>
-            <p className="max-w-xl text-base sm:text-lg text-[#f2ecdd]/80 leading-relaxed pt-2">
+
+            <p className="mt-6 max-w-2xl text-base sm:text-lg text-[#f2ecdd]/85 leading-relaxed hero-subtext">
               A calm corner for clear minds, well-made specialty coffee, and 100% natural cold-pressed fruit juices.
               Where conversations are allowed to linger.
             </p>
 
-            <div className="flex items-center gap-4 pt-4 flex-wrap">
+            <div className="mt-7 flex items-center gap-4 flex-wrap hero-actions">
               <button
                 id="hero-explore-menu-btn"
                 onClick={() => onNavigate('menu')}
@@ -57,60 +59,36 @@ export const HomeView: React.FC<HomeViewProps> = ({ onNavigate, onSelectJuice })
               <button
                 id="hero-visit-corner-btn"
                 onClick={() => onNavigate('contact')}
-                className="btn btn-outline flex items-center gap-2"
+                className="btn btn-solid flex items-center gap-2"
               >
                 <MapPin className="w-4 h-4" />
                 <span>Visit our quiet corner</span>
               </button>
             </div>
 
-            {/* Quick Slogan Badge */}
-            <div className="pt-4 flex items-center gap-3 text-xs text-[#c9b089]">
+            <div className="mt-8 flex flex-wrap items-center gap-3 text-xs text-[#c9b089] floating-badge">
               <Sparkles className="w-3.5 h-3.5" />
               <span className="tracking-wider uppercase font-semibold">Pure ingredients · Pure you · Since 2026</span>
             </div>
           </div>
 
-          {/* Hero Right Column — FIRST PICTURE: picture_1st.png */}
-          <div className="lg:col-span-5 text-left lg:text-right space-y-4">
-            <div
-              id="hero-first-picture-container"
-              className="relative rounded-lg overflow-hidden shadow-2xl border-2 border-[#c9b089]/40 aspect-16/10 sm:aspect-16/9 group cursor-pointer"
-              onClick={() => onNavigate('gallery')}
-              title="Click to view our gallery"
-            >
-              <img
-                id="hero-first-picture-img"
-                src="/picture_1st.png"
-                alt="Zen Cafe interior wall with three framed coffee pictures under track lighting"
-                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                onError={(e) => {
-                  const target = e.currentTarget as HTMLImageElement;
-                  if (!target.src.endsWith('/picture_1st.jpg')) {
-                    target.src = '/picture_1st.jpg';
-                  }
-                }}
-                referrerPolicy="no-referrer"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-[#1b2317]/60 via-transparent to-transparent pointer-events-none" />
-              <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between text-left text-[11px] font-semibold text-[#f2ecdd]/95 bg-[#1b2317]/70 backdrop-blur-md px-3 py-1.5 rounded border border-[#c9b089]/25">
-                <span className="tracking-wide">Zen Cafe Corner · Track Lighting</span>
-                <span className="text-[10px] text-[#c9b089] uppercase font-bold tracking-widest flex items-center gap-1">
-                  <span>View</span>
-                  <ArrowUpRight className="w-3 h-3" />
-                </span>
-              </div>
-            </div>
-
-            <div className="flex flex-col items-start lg:items-end">
-              <div className="eyebrow" style={{ justifyContent: 'flex-end' }}>
-                Open Today
-              </div>
-              <p className="font-serif-title text-2xl sm:text-3xl text-[#f2ecdd] font-medium mt-1">
+          <div className="mt-12 flex flex-wrap items-end justify-between gap-6 reveal-on-scroll">
+            <div className="max-w-sm rounded-[24px] border border-[#c9b089]/30 bg-[#1b2317]/45 p-4 backdrop-blur-sm shadow-[0_25px_60px_-30px_rgba(0,0,0,0.9)]">
+              <div className="eyebrow" style={{ justifyContent: 'flex-start' }}>Open Today</div>
+              <p className="mt-3 font-serif-title text-2xl sm:text-3xl text-[#f2ecdd] font-medium">
                 {CONTACT_INFO.hours}
               </p>
-              <span className="text-xs text-[#c9b089] mt-0.5">Saturday: Closed</span>
+              <span className="mt-1 block text-xs text-[#c9b089]">Saturday: Closed</span>
             </div>
+
+            <button
+              id="hero-gallery-sneakpeek"
+              onClick={() => onNavigate('gallery')}
+              className="group inline-flex items-center gap-3 rounded-full border border-[#c9b089]/40 bg-[#1b2317]/40 px-4 py-3 text-xs font-bold uppercase tracking-[0.16em] text-[#f2ecdd] hover:border-[#c9b089] hover:bg-[#1b2317]/60 transition-all duration-300"
+            >
+              <span>View gallery</span>
+              <ArrowUpRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+            </button>
           </div>
         </div>
       </section>
@@ -180,7 +158,7 @@ export const HomeView: React.FC<HomeViewProps> = ({ onNavigate, onSelectJuice })
               </h2>
             </div>
 
-            <div className="flex items-center gap-1.5 bg-[#d8c79e]/60 p-1.5 rounded">
+            <div className="flex items-center gap-1.5 bg-[#d8c79e]/60 p-1.5 rounded flex-wrap">
               <button
                 id="home-filter-all"
                 onClick={() => setFilter('all')}
@@ -191,15 +169,6 @@ export const HomeView: React.FC<HomeViewProps> = ({ onNavigate, onSelectJuice })
                 All
               </button>
               <button
-                id="home-filter-juice"
-                onClick={() => setFilter('juice')}
-                className={`px-4 py-1.5 text-xs font-bold uppercase tracking-wider rounded transition-all ${
-                  filter === 'juice' ? 'bg-[#1b2317] text-[#f2ecdd]' : 'text-[#262f1f] hover:bg-[#d8c79e]'
-                }`}
-              >
-                Fresh Juices
-              </button>
-              <button
                 id="home-filter-coffee"
                 onClick={() => setFilter('coffee')}
                 className={`px-4 py-1.5 text-xs font-bold uppercase tracking-wider rounded transition-all ${
@@ -207,6 +176,24 @@ export const HomeView: React.FC<HomeViewProps> = ({ onNavigate, onSelectJuice })
                 }`}
               >
                 Coffee
+              </button>
+              <button
+                id="home-filter-cold-drinks"
+                onClick={() => setFilter('cold-drinks')}
+                className={`px-4 py-1.5 text-xs font-bold uppercase tracking-wider rounded transition-all ${
+                  filter === 'cold-drinks' ? 'bg-[#1b2317] text-[#f2ecdd]' : 'text-[#262f1f] hover:bg-[#d8c79e]'
+                }`}
+              >
+                Cold Drinks
+              </button>
+              <button
+                id="home-filter-tea"
+                onClick={() => setFilter('tea')}
+                className={`px-4 py-1.5 text-xs font-bold uppercase tracking-wider rounded transition-all ${
+                  filter === 'tea' ? 'bg-[#1b2317] text-[#f2ecdd]' : 'text-[#262f1f] hover:bg-[#d8c79e]'
+                }`}
+              >
+                Tea
               </button>
             </div>
           </div>
@@ -217,7 +204,7 @@ export const HomeView: React.FC<HomeViewProps> = ({ onNavigate, onSelectJuice })
               <div
                 key={item.id}
                 id={`home-menu-item-${item.id}`}
-                onClick={() => item.category === 'juice' ? onSelectJuice(item) : onNavigate('menu')}
+                onClick={() => item.category === 'cold-drinks' || item.category === 'coffee' ? onSelectJuice(item) : onNavigate('menu')}
                 className="group bg-[#ede6d6] rounded overflow-hidden shadow-sm border border-[#262f1f]/10 flex flex-col justify-between transition-all duration-300 hover:shadow-lg hover:-translate-y-1 cursor-pointer"
               >
                 <div>
@@ -233,9 +220,9 @@ export const HomeView: React.FC<HomeViewProps> = ({ onNavigate, onSelectJuice })
                         Seasonal 2026
                       </span>
                     )}
-                    {item.category === 'juice' && (
+                    {(item.category === 'cold-drinks' || item.category === 'coffee') && (
                       <span className="absolute bottom-3 right-3 bg-[#1b2317]/80 text-[#c9b089] text-[10px] font-semibold uppercase px-2 py-0.5 rounded backdrop-blur-sm">
-                        View Poster
+                        View Item
                       </span>
                     )}
                   </div>
@@ -370,7 +357,7 @@ export const HomeView: React.FC<HomeViewProps> = ({ onNavigate, onSelectJuice })
           <div className="lg:col-span-5 relative">
             <div className="relative aspect-4/5 rounded overflow-hidden shadow-2xl border border-[#262f1f]/20">
               <img
-                src={pritomImg}
+                src="/Founders_Profile.jpg"
                 alt="Pritom Chowhan - Co-Founder of Zen Cafe"
                 className="w-full h-full object-cover"
                 onError={(e) => {
@@ -383,21 +370,21 @@ export const HomeView: React.FC<HomeViewProps> = ({ onNavigate, onSelectJuice })
               />
             </div>
             <div className="absolute -bottom-5 left-6 right-6 bg-[#c9b089] text-[#1b2317] px-6 py-4 rounded shadow-xl font-serif-title italic text-base sm:text-lg text-center">
-              &ldquo;A half-baked effort won&apos;t bring you any satisfaction.&rdquo;
+              &ldquo;The best places feel like an invitation to slow down and stay awhile.&rdquo;
             </div>
           </div>
 
           <div className="lg:col-span-7 space-y-5 pt-4 lg:pt-0">
             <div className="eyebrow">Meet the founders</div>
             <h2 className="font-serif-title text-3xl sm:text-4xl lg:text-5xl font-normal text-[#1b2317]">
-              Hosts before anything else.
+              A cafe built around people.
             </h2>
             <p className="text-[#5f5b48] leading-relaxed text-base">
-              Founded by <strong className="text-[#1b2317]">Pritom Chowhan</strong>, <strong className="text-[#1b2317]">Niaz Mohammad Shovon</strong>, and <strong className="text-[#1b2317]">Minhajul Huda</strong>, Zen Cafe was born around a simple idea: hospitality is found in the deliberate details — the warmth of a cup, honest seasonal fruits, a remembered order, and a quiet table held open for you.
+              Zen Cafe began with <strong className="text-[#1b2317]">Pritom Chowhan</strong>, <strong className="text-[#1b2317]">Niaz Mohammad Shovon</strong>, and <strong className="text-[#1b2317]">Minhajul Huda</strong> imagining a place that feels welcoming from the moment you arrive. Here, hospitality lives in the small things: a carefully made cup, fresh fruit chosen with care, a familiar order remembered, and a peaceful table waiting for you.
             </p>
             <p className="text-[#5f5b48] leading-relaxed text-base">
-              From hand-pulling morning espressos to cold-pressing fresh juices, our joint philosophy remains:
-              <strong className="text-[#1b2317] font-semibold"> Pause. Breathe. Stay.</strong>
+              Whether you come for a morning espresso, a cold-pressed juice, or an hour of quiet conversation, our shared promise is simple:
+              <strong className="text-[#1b2317] font-semibold"> make room for a better moment.</strong>
             </p>
             <div className="pt-2">
               <button
@@ -409,57 +396,6 @@ export const HomeView: React.FC<HomeViewProps> = ({ onNavigate, onSelectJuice })
                 <ArrowUpRight className="w-4 h-4" />
               </button>
             </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ================= JOURNAL PREVIEW ================= */}
-      <section id="home-journal-preview-section" className="band band-paper">
-        <div className="wrap">
-          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-6 mb-12">
-            <div>
-              <div className="eyebrow">Journal</div>
-              <h2 className="font-serif-title text-3xl sm:text-4xl lg:text-5xl font-normal mt-3 text-[#1b2317]">
-                Notes from the table.
-              </h2>
-            </div>
-            <button
-              id="home-journal-visit-link"
-              onClick={() => onNavigate('journal')}
-              className="link-u"
-            >
-              <span>Visit the journal</span>
-              <ArrowUpRight className="w-3.5 h-3.5" />
-            </button>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {JOURNAL_POSTS.slice(0, 3).map((post) => (
-              <article
-                key={post.id}
-                id={`home-journal-card-${post.id}`}
-                className="p-6 bg-[#e4d8bd]/40 rounded border border-[#262f1f]/10 flex flex-col justify-between space-y-4"
-              >
-                <div>
-                  <div className="text-[11px] font-bold uppercase tracking-wider text-[#a67c52]">
-                    {post.date} · {post.category}
-                  </div>
-                  <h3 className="font-serif-title text-xl font-bold text-[#1b2317] mt-2 leading-snug">
-                    {post.title}
-                  </h3>
-                  <p className="text-sm text-[#5f5b48] mt-3 leading-relaxed">
-                    {post.excerpt}
-                  </p>
-                </div>
-                <button
-                  onClick={() => onNavigate('journal')}
-                  className="link-u text-xs pt-2"
-                >
-                  <span>Read note</span>
-                  <ArrowUpRight className="w-3 h-3" />
-                </button>
-              </article>
-            ))}
           </div>
         </div>
       </section>

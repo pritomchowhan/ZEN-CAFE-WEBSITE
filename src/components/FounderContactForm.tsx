@@ -62,16 +62,6 @@ export const FounderContactForm: React.FC = () => {
     <section className="band band-sand">
       <div className="wrap max-w-4xl">
         <div className="bg-[#ede6d6] p-6 sm:p-8 rounded shadow-sm border border-[#262f1f]/10 space-y-6">
-          <div>
-            <div className="eyebrow">Connect with Zen Cafe</div>
-            <h2 className="font-serif-title text-2xl sm:text-3xl font-bold text-[#1b2317] mt-1">
-              Message the founders
-            </h2>
-            <p className="text-sm text-[#5f5b48] mt-2 leading-relaxed">
-              Have a question about Zen Cafe, collaborations, events, or community activities? Send us a message and our team will get back to you.
-            </p>
-          </div>
-
           {submitted ? (
             <div className="p-6 bg-[#d8c79e] rounded flex items-start gap-4">
               <CheckCircle2 className="w-6 h-6 text-emerald-800 shrink-0 mt-0.5" />
@@ -146,19 +136,33 @@ export const FounderContactForm: React.FC = () => {
                 <label htmlFor="founder-contact-recipient" className="text-xs font-bold uppercase tracking-wider text-[#a67c52] block">
                   Message For
                 </label>
-                <select
-                  id="founder-contact-recipient"
-                  value={formData.founder}
-                  onChange={(event) => updateField('founder', event.target.value)}
-                  className="w-full px-4 py-2.5 bg-[#ede6d6] border border-[#262f1f]/20 rounded text-sm focus:outline-none focus:border-[#a67c52]"
-                >
-                  <option value="general">Zen Cafe team</option>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                  <button
+                    type="button"
+                    onClick={() => updateField('founder', 'general')}
+                    className={`px-3 py-2.5 rounded border text-left text-sm transition-all ${
+                      formData.founder === 'general'
+                        ? 'border-[#a67c52] bg-[#d8c79e] text-[#1b2317]'
+                        : 'border-[#262f1f]/20 bg-[#ede6d6] text-[#1b2317] hover:border-[#a67c52]'
+                    }`}
+                  >
+                    Zen Cafe team
+                  </button>
                   {FOUNDERS_DATA.map((founder) => (
-                    <option key={founder.id} value={founder.id}>
+                    <button
+                      key={founder.id}
+                      type="button"
+                      onClick={() => updateField('founder', founder.id)}
+                      className={`px-3 py-2.5 rounded border text-left text-sm transition-all ${
+                        formData.founder === founder.id
+                          ? 'border-[#a67c52] bg-[#d8c79e] text-[#1b2317]'
+                          : 'border-[#262f1f]/20 bg-[#ede6d6] text-[#1b2317] hover:border-[#a67c52]'
+                      }`}
+                    >
                       {founder.displayName}
-                    </option>
+                    </button>
                   ))}
-                </select>
+                </div>
               </div>
 
               <div className="space-y-1.5">

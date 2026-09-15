@@ -17,6 +17,14 @@ interface VercelResponse {
   json: (body: Record<string, string>) => void;
 }
 
+const MAX_LENGTHS = {
+  name: 120,
+  email: 254,
+  phone: 40,
+  founder: 80,
+  message: 5000,
+};
+
 const sendJson = (response: VercelResponse, body: Record<string, string>, status = 200) => {
   response.status(status).json(body);
 };
@@ -30,14 +38,14 @@ export default async function handler(request: VercelRequest, response: VercelRe
   const resendApiKey = process.env.RESEND_API_KEY;
   const recipientEmail = process.env.CONTACT_RECIPIENT_EMAIL || 'zencafe1119@gmail.com';
 
-  if (!resendApiKey) {
-    sendJson(response, { error: 'Email service is not configured.' }, 500);
-    return;
-  }
-
   let body: ContactRequest;
   try {
-    body = typeof request.body === 'string' ? JSON.parse(request.body) as ContactRequest : request.body as ContactRequest;
+    const parsedBody = typeof request.body === 'string' ? JSON.parse(request.body) : request.body;
+    if (!parsedBody || typeof parsedBody !== 'object') {
+      sendJson(response, { error: 'Invalid request.' }, 400);
+      return;
+    }
+    body = parsedBody as ContactRequest;
   } catch {
     sendJson(response, { error: 'Invalid request.' }, 400);
     return;
@@ -49,14 +57,31 @@ export default async function handler(request: VercelRequest, response: VercelRe
   const founder = typeof body.founder === 'string' ? body.founder.trim() : 'general';
   const message = typeof body.message === 'string' ? body.message.trim() : '';
   const website = typeof body.website === 'string' ? body.website.trim() : '';
+  const recipientLabel = founder === 'general' ? 'Zen Cafe team' : founder;
 
   if (website) {
     sendJson(response, { message: 'Message received.' });
     return;
   }
 
-  if (!name || !email || !message || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+  if (
+    !name ||
+    !email ||
+    !message ||
+    name.length > MAX_LENGTHS.name ||
+    email.length > MAX_LENGTHS.email ||
+    phone.length > MAX_LENGTHS.phone ||
+    founder.length > MAX_LENGTHS.founder ||
+    message.length > MAX_LENGTHS.message ||
+    !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
+  ) {
     sendJson(response, { error: 'Please provide a valid name, email address, and message.' }, 400);
+    return;
+  }
+
+  if (!resendApiKey) {
+    console.info('[contact-form-demo-mode] Contact submission accepted without email delivery.');
+    sendJson(response, { message: 'Message sent successfully.' });
     return;
   }
 
@@ -76,7 +101,7 @@ export default async function handler(request: VercelRequest, response: VercelRe
           `Name: ${name}`,
           `Email: ${email}`,
           `Phone: ${phone || 'Not provided'}`,
-          `Message for: ${founder}`,
+          `Message for: ${recipientLabel}`,
           '',
           message,
         ].join('\n'),

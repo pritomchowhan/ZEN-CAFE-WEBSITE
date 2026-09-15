@@ -1,8 +1,9 @@
-export type ViewType = 'home' | 'about' | 'menu' | 'gallery' | 'contact' | 'owner' | 'journal' | 'founder-detail';
+export type ViewType = 'home' | 'about' | 'menu' | 'gallery' | 'contact' | 'owner' | 'founder-detail';
 
 export interface FounderWorkItem {
   role: string;
   organization: string;
+  organizationUrl?: string;
   duration?: string;
   details?: string;
 }
@@ -23,6 +24,7 @@ export interface FounderProfile {
   fallbackImage?: string;
   bio: string;
   motto: string;
+  mottoDetails?: string;
   mottoHashtags?: string[];
   livesIn: string;
   from: string;
@@ -33,6 +35,7 @@ export interface FounderProfile {
   phone?: string;
   instagram?: string;
   instagramUrl?: string;
+  facebookUrl?: string;
   linkedin?: string;
   linkedinUrl?: string;
   Linkdin?: string;
@@ -41,32 +44,30 @@ export interface FounderProfile {
   mutualCount?: string;
   work: FounderWorkItem[];
   education: FounderEducationItem[];
+  storyTitle?: string;
   story: string;
+  storyClosing?: string;
   philosophy: string;
   zenRoleDescription: string;
   favoriteDrink: string;
   favoriteDrinkId?: string;
 }
 
+export type MenuCategory = 'coffee' | 'cold-drinks' | 'tea' | 'breakfast' | 'desserts' | 'specials';
+
+export type MenuLabel = 'Popular' | 'New' | 'Vegetarian' | "Chef's Choice";
+
 export interface MenuItem {
   id: string;
   name: string;
   price: string;
-  category: 'coffee' | 'juice';
+  category: MenuCategory;
   description: string;
   tag?: string;
+  label?: MenuLabel;
   image: string;
   highlights?: string[];
   isSeasonal?: boolean;
-}
-
-export interface JournalPost {
-  id: string;
-  title: string;
-  date: string;
-  excerpt: string;
-  full: string;
-  category: string;
 }
 
 export interface TimelineItem {
@@ -80,6 +81,6 @@ export interface GalleryItem {
   title: string;
   caption: string;
   image: string;
-  category: 'interior' | 'juice' | 'coffee' | 'culture';
+  category: 'interior' | 'juice' | 'coffee' | 'tea' | 'culture';
   spanTwo?: boolean;
 }

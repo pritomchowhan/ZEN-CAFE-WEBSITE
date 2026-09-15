@@ -12,15 +12,16 @@ export const FOUNDERS_DATA: FounderProfile[] = [
     role: 'Co-Founder & Creative Director',
     image: pritomImg,
     fallbackImage: '/pritom_chowhan.jpg',
-    bio: 'I got lost in the bad things of life. Otherwise, I would have met myself and fallen in love. 🔮',
-    motto: "A half-baked effort won't get you good results or bring you any satisfaction.",
-    mottoHashtags: ['#pornota', '#Warfaze'],
+    bio: "I don't have everything figured out. I'm just trying to understand life, do meaningful work, and become better along the way.",
+    motto: "Do it properly, or don't do it at all.",
+    mottoDetails: 'Life is too short for half-hearted dreams, forced relationships, and things done only for approval. Stay curious. Stay honest. Keep moving.',
     livesIn: 'Dhaka, Bangladesh',
-    from: 'Akhaura, Chittagong, Bangladesh',
+    from: 'Akhaura, Brahmanbaria',
     birthday: 'March 23',
     gender: 'Male',
     instagram: 'pritom_chowhan',
     instagramUrl: 'https://www.instagram.com/pritom_chowhan/',
+    facebookUrl: 'https://www.facebook.com/imkingpritom/',
     linkedin: 'Pritom Chowhan',
     linkedinUrl: 'https://www.linkedin.com/in/pritom-chowhan-80088a1b1/',
     Linkdin: 'Pritom Chowhan',
@@ -28,21 +29,27 @@ export const FOUNDERS_DATA: FounderProfile[] = [
 
     work: [
       {
-        role: 'Cultural Development & Arts',
-        organization: 'Upazilla silpokola Academy Akhaura',
-        duration: 'Oct 30, 2018 - Present · 7 years, 10 months',
-        details: 'Active patronage and long-standing association with local artistic initiatives.',
+        role: 'Chief Executive Officer (CEO) & Co-Founder',
+        organization: 'Pathshala',
+        organizationUrl: 'https://www.facebook.com/pathshala001',
+        duration: 'Oct 2020 - Feb 2022',
       },
       {
-        role: 'Digital Skills & Technology',
+        role: 'Studied Computer Graphic Designer',
         organization: 'Learning & Earning Development Project - LEDP',
-        details: 'Skill development and digital entrepreneurship track.',
+        organizationUrl: 'https://www.facebook.com/profile.php?id=100069827409835',
+        duration: 'Jul 21, 2020 - Jan 20, 2021',
+      },
+      {
+        role: 'Debating & Communication',
+        organization: 'Cambrian Debating Society - CDS',
+        duration: 'Sept 25, 2017 - Dec 30, 2019',
       },
     ],
     education: [
       {
         institution: 'American International University-Bangladesh (AIUB)',
-        details: 'Undergraduate study right by our cafe doorstep in Kuratoli, Kuril.',
+        details: 'Bachelor of Computer Science and Engineering.',
       },
       {
         institution: 'Cambrian Debating Society - CDS',
@@ -53,8 +60,10 @@ export const FOUNDERS_DATA: FounderProfile[] = [
         details: 'Foundational schooling and community roots.',
       },
     ],
+    storyTitle: 'Still Becoming.',
     story:
-      'Pritom Chowhan is one of the foundational minds behind Zen Cafe. Having walked the streets of Kuratoli and studied at AIUB, he recognized the urgent need for an unhurried, calm retreat where students and creatives could gather without the sensory overload of typical Dhaka street stalls. Driven by his core conviction that "a half-baked effort won\'t bring you any satisfaction," Pritom ensured every interior corner, track light, and beverage standard was executed with uncompromising care.',
+      'I believe life is less about having everything figured out and more about becoming a better version of yourself, one experience at a time. I like creating things, learning from mistakes, questioning what already exists, and turning simple ideas into something meaningful.',
+    storyClosing: "I don't want to simply pass through life. I want to leave something behind that feels genuinely mine.",
     philosophy:
       'Patience in craft, heart in hospitality, and never doing anything by halves.',
     zenRoleDescription:
@@ -70,7 +79,7 @@ export const FOUNDERS_DATA: FounderProfile[] = [
     role: 'Co-Founder & Operations Lead',
     image: shovonImg,
     fallbackImage: '/niaz_shovon.jpg',
-    bio: 'Long time no seeee 🔮',
+    bio: 'I believe the best spaces are built on consistency, kindness, and the small details that make people feel welcome. I am always learning, growing, and finding better ways to turn every visit into a memorable experience.',
     motto: 'Hai ishq mein jab dube hum / Gham bhi mile toh kaisa gham?',
     livesIn: 'Dhaka, Bangladesh',
     from: 'Bhola, Barisal, Bangladesh',
@@ -78,6 +87,7 @@ export const FOUNDERS_DATA: FounderProfile[] = [
     gender: 'Male',
     instagram: 'niaaz_shovon',
     instagramUrl: 'https://www.instagram.com/niaazzz___/',
+    facebookUrl: 'https://www.facebook.com/shikder.mahmmud',
 
     work: [
       {
@@ -86,12 +96,26 @@ export const FOUNDERS_DATA: FounderProfile[] = [
         duration: 'Mar 8, 2025 - Present · 1 year, 6 months',
         details: 'Managing fast-paced hospitality logistics and guest relations.',
       },
+      {
+        role: 'Works at Panthom Rc',
+        organization: 'DMF',
+        duration: 'March 8, 2025 - Present',
+      },
+      {
+        role: 'Former DMF at Textile Galaxy XI',
+        organization: 'Textile Galaxy XI',
+        duration: 'June 2023 - February 2025',
+      },
     ],
     education: [
       {
         institution: 'Charfassion govt college',
         details: 'Higher secondary studies with academic distinction.',
         year: 'Class of 2019',
+      },
+      {
+        institution: 'North South University',
+        details: 'Bachelor of Business Administration',
       },
     ],
     story:
@@ -119,8 +143,7 @@ export const FOUNDERS_DATA: FounderProfile[] = [
     gender: 'Male',
     instagram: 'minhaj_1204',
     instagramUrl: 'https://www.instagram.com/minhaj_1204/',
-    friendsCount: '758 friends',
-    mutualCount: '127 mutual friends',
+    facebookUrl: 'https://www.facebook.com/minhajul.huda.1204',
     work: [
       {
         role: 'Community Engagement & Space Design',
@@ -131,8 +154,16 @@ export const FOUNDERS_DATA: FounderProfile[] = [
     ],
     education: [
       {
-        institution: 'Nikunja Model School & College',
-        details: 'College education in North Dhaka, bridging friendships across the city.',
+        institution: 'Nikunja Model College',
+        year: 'Class of 2019',
+      },
+      {
+        institution: 'Bangladesh Railway Govt. high school ,Akhaura , 2009',
+        year: 'Class of 2017',
+      },
+      {
+        institution: 'United International University',
+        details: 'Bachelor of Computer Science and Engineering.',
       },
     ],
     story:

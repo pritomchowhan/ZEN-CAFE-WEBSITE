@@ -1,7 +1,7 @@
 import React from 'react';
 import { ViewType } from '../types';
 import { CONTACT_INFO } from '../data/cafeData';
-import { MapPin, Phone, Mail, MessageCircle, Instagram, Facebook, Linkedin, ArrowUpRight } from 'lucide-react';
+import { MapPin, Phone, Mail, MessageCircle, Instagram, Facebook, ArrowUpRight } from 'lucide-react';
 
 interface FooterProps {
   onNavigate: (view: ViewType) => void;
@@ -56,13 +56,6 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
               >
                 <MessageCircle className="w-4 h-4" />
               </a>
-              <span
-                id="footer-social-linkedin"
-                title="LinkedIn link: I will add later"
-                className="px-2 py-1 rounded bg-[#2f3a28]/60 text-[#c9b089]/70 text-[10px] uppercase font-bold tracking-wider cursor-default"
-              >
-                LinkedIn: Soon
-              </span>
             </div>
           </div>
 
@@ -130,7 +123,7 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
           <div>
             <h4 className="text-xs font-bold uppercase tracking-[0.16em] text-[#c9b089] mb-4">Explore</h4>
             <div className="grid grid-cols-2 gap-2 text-xs font-semibold uppercase tracking-wider text-[#f2ecdd]/70">
-              {(['home', 'about', 'menu', 'gallery', 'contact', 'owner', 'journal'] as ViewType[]).map((v) => (
+              {(['home', 'about', 'menu', 'gallery', 'contact', 'owner'] as ViewType[]).map((v) => (
                 <button
                   key={v}
                   onClick={() => onNavigate(v)}

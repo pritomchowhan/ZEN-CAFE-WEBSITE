@@ -62,7 +62,7 @@ export const Header: React.FC<HeaderProps> = ({ currentView, onNavigate }) => {
 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center gap-1" aria-label="Primary Navigation">
-            {(['home', 'about', 'menu', 'gallery', 'contact', 'owner', 'journal'] as ViewType[]).map((view) => (
+            {(['home', 'about', 'menu', 'gallery', 'contact', 'owner'] as ViewType[]).map((view) => (
               <button
                 key={view}
                 id={`nav-btn-${view}`}
@@ -112,7 +112,7 @@ export const Header: React.FC<HeaderProps> = ({ currentView, onNavigate }) => {
             <div className="border-b border-[#f2ecdd]/10 pb-4 mb-2">
               <span className="text-xs uppercase tracking-widest text-[#c9b089] font-bold block">Navigation</span>
             </div>
-            {(['home', 'about', 'menu', 'gallery', 'contact', 'owner', 'journal'] as ViewType[]).map((view) => (
+            {(['home', 'about', 'menu', 'gallery', 'contact', 'owner'] as ViewType[]).map((view) => (
               <button
                 key={view}
                 id={`mobile-nav-link-${view}`}
@@ -126,20 +126,7 @@ export const Header: React.FC<HeaderProps> = ({ currentView, onNavigate }) => {
             ))}
           </div>
 
-          <div className="pt-6 border-t border-[#f2ecdd]/10 space-y-3">
-            <div className="text-xs text-[#f2ecdd]/60">
-              <p className="font-semibold text-[#c9b089] uppercase tracking-wider">{CONTACT_INFO.address}</p>
-              <p className="mt-1">{CONTACT_INFO.hours}</p>
-            </div>
-            <button
-              id="mobile-drawer-contact-btn"
-              onClick={() => handleNavClick('contact')}
-              className="w-full py-3 bg-[#c9b089] text-[#1b2317] font-bold text-xs uppercase tracking-widest rounded flex items-center justify-center gap-2"
-            >
-              <MapPin className="w-4 h-4" />
-              <span>Find Our Quiet Corner</span>
-            </button>
-          </div>
+          <div className="pt-6 border-t border-[#f2ecdd]/10" />
         </div>
       )}
     </>

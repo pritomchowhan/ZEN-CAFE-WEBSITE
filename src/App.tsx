@@ -15,7 +15,6 @@ import { GalleryView } from './views/GalleryView';
 import { ContactView } from './views/ContactView';
 import { OwnerView } from './views/OwnerView';
 import { FounderDetailView } from './views/FounderDetailView';
-import { JournalView } from './views/JournalView';
 
 export default function App() {
   const [currentView, setCurrentView] = useState<ViewType>('home');
@@ -50,7 +49,7 @@ export default function App() {
         const fid = rawHash.replace('founder-', '');
         setSelectedFounderId(fid);
         setCurrentView('founder-detail');
-      } else if (['home', 'about', 'menu', 'gallery', 'contact', 'owner', 'journal'].includes(rawHash)) {
+      } else if (['home', 'about', 'menu', 'gallery', 'contact', 'owner'].includes(rawHash)) {
         setCurrentView(rawHash as ViewType);
       }
     };
@@ -63,13 +62,36 @@ export default function App() {
     return () => window.removeEventListener('hashchange', handleHashChange);
   }, []);
 
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('is-visible');
+          }
+        });
+      },
+      { threshold: 0.14 }
+    );
+
+    const elements = document.querySelectorAll('.reveal-on-scroll');
+    elements.forEach((element) => observer.observe(element));
+
+    return () => observer.disconnect();
+  }, [currentView]);
+
   const handleViewChange = (view: ViewType) => {
     window.location.hash = view === 'home' ? '' : view;
     handleNavigate(view);
   };
 
+  const viewTransitionKey =
+    currentView === 'founder-detail'
+      ? `${currentView}-${selectedFounderId}`
+      : currentView;
+
   return (
-    <div className="min-h-screen flex flex-col bg-[#ede6d6] text-[#262f1f] selection:bg-[#c9b089] selection:text-[#1b2317]">
+    <div className="premium-shell min-h-screen flex flex-col bg-[#ede6d6] text-[#262f1f] selection:bg-[#c9b089] selection:text-[#1b2317]">
       {/* Site Header */}
       <Header
         currentView={currentView === 'founder-detail' ? 'owner' : currentView}
@@ -78,34 +100,35 @@ export default function App() {
 
       {/* Main Content Area */}
       <main className="flex-1">
-        {currentView === 'home' && (
-          <HomeView
-            onNavigate={handleViewChange}
-            onSelectJuice={handleSelectJuice}
-          />
-        )}
-        {currentView === 'about' && <AboutView onNavigate={handleViewChange} />}
-        {currentView === 'menu' && (
-          <MenuView onSelectJuice={handleSelectJuice} />
-        )}
-        {currentView === 'gallery' && (
-          <GalleryView onSelectJuice={handleSelectJuice} />
-        )}
-        {currentView === 'contact' && <ContactView />}
-        {currentView === 'owner' && (
-          <OwnerView
-            onNavigate={handleViewChange}
-            onSelectFounder={handleSelectFounder}
-          />
-        )}
-        {currentView === 'founder-detail' && (
-          <FounderDetailView
-            founderId={selectedFounderId}
-            onNavigate={handleViewChange}
-            onSelectFounder={handleSelectFounder}
-          />
-        )}
-        {currentView === 'journal' && <JournalView />}
+        <div key={viewTransitionKey} className="page-transition">
+          {currentView === 'home' && (
+            <HomeView
+              onNavigate={handleViewChange}
+              onSelectJuice={handleSelectJuice}
+            />
+          )}
+          {currentView === 'about' && <AboutView onNavigate={handleViewChange} />}
+          {currentView === 'menu' && (
+            <MenuView onSelectJuice={handleSelectJuice} />
+          )}
+          {currentView === 'gallery' && (
+            <GalleryView onSelectJuice={handleSelectJuice} />
+          )}
+          {currentView === 'contact' && <ContactView />}
+          {currentView === 'owner' && (
+            <OwnerView
+              onNavigate={handleViewChange}
+              onSelectFounder={handleSelectFounder}
+            />
+          )}
+          {currentView === 'founder-detail' && (
+            <FounderDetailView
+              founderId={selectedFounderId}
+              onNavigate={handleViewChange}
+              onSelectFounder={handleSelectFounder}
+            />
+          )}
+        </div>
       </main>
 
       {/* Site Footer */}

@@ -1,7 +1,6 @@
 import React from 'react';
 import { ViewType } from '../types';
 import { FOUNDERS_DATA } from '../data/foundersData';
-import { FounderContactForm } from '../components/FounderContactForm';
 import {
   ArrowUpRight,
   MapPin,
@@ -252,8 +251,6 @@ export const OwnerView: React.FC<OwnerViewProps> = ({
           );
         })}
       </section>
-
-      <FounderContactForm />
 
       {/* ================= HOUSE VALUES ================= */}
       <section className="band band-sand">

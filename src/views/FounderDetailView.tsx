@@ -6,18 +6,18 @@ import {
   ArrowRight,
   ArrowUpRight,
   MapPin,
-  Calendar,
   Heart,
   Briefcase,
   GraduationCap,
   Instagram,
+  Facebook,
   Linkedin,
   Phone,
   Users,
-  Coffee,
   Sparkles,
   Quote,
   CheckCircle2,
+  MessageCircle,
 } from 'lucide-react';
 
 interface FounderDetailViewProps {
@@ -175,20 +175,6 @@ export const FounderDetailView: React.FC<FounderDetailViewProps> = ({
                   </div>
                 </div>
 
-                {currentFounder.birthday && (
-                  <div className="flex items-start gap-3">
-                    <Calendar className="w-4 h-4 text-[#2f3a28] shrink-0 mt-0.5" />
-                    <div>
-                      <span className="block text-[11px] uppercase tracking-wider text-[#262f1f]/60 font-semibold">
-                        Birthday
-                      </span>
-                      <span className="font-medium text-[#1b2317]">
-                        {currentFounder.birthday}
-                      </span>
-                    </div>
-                  </div>
-                )}
-
                 {currentFounder.relationshipStatus && (
                   <div className="flex items-start gap-3">
                     <Heart className="w-4 h-4 text-[#a64030] shrink-0 mt-0.5" />
@@ -252,20 +238,40 @@ export const FounderDetailView: React.FC<FounderDetailViewProps> = ({
                   </div>
                 )}
 
-                {(currentFounder.linkedin || currentFounder.Linkdin) && (
+                {currentFounder.facebookUrl && (
                   <div className="flex items-start gap-3">
-                    <Linkedin className="w-4 h-4 text-[#0a66c2] shrink-0 mt-0.5" />
+                    <Facebook className="w-4 h-4 text-[#1877f2] shrink-0 mt-0.5" />
+                    <div>
+                      <span className="block text-[11px] uppercase tracking-wider text-[#262f1f]/60 font-semibold">
+                        Facebook
+                      </span>
+                      <a
+                        href={currentFounder.facebookUrl}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="font-medium text-[#1b2317] hover:text-[#c9b089] transition-colors inline-flex items-center gap-1"
+                      >
+                        <span>View Facebook profile</span>
+                        <ArrowUpRight className="w-3 h-3" />
+                      </a>
+                    </div>
+                  </div>
+                )}
+
+                {currentFounder.linkedinUrl && (
+                  <div className="flex items-start gap-3">
+                    <Linkedin className="w-4 h-4 text-[#2867b2] shrink-0 mt-0.5" />
                     <div>
                       <span className="block text-[11px] uppercase tracking-wider text-[#262f1f]/60 font-semibold">
                         LinkedIn
                       </span>
                       <a
-                        href={currentFounder.linkedinUrl || currentFounder.LinkdinUrl}
+                        href={currentFounder.linkedinUrl}
                         target="_blank"
                         rel="noreferrer"
                         className="font-medium text-[#1b2317] hover:text-[#c9b089] transition-colors inline-flex items-center gap-1"
                       >
-                        <span>{currentFounder.linkedin || currentFounder.Linkdin}</span>
+                        <span>{currentFounder.linkedin || 'View LinkedIn profile'}</span>
                         <ArrowUpRight className="w-3 h-3" />
                       </a>
                     </div>
@@ -291,28 +297,6 @@ export const FounderDetailView: React.FC<FounderDetailViewProps> = ({
               </div>
             </div>
 
-            {/* Favorite Drink at Zen Cafe */}
-            <div className="p-6 bg-[#2f3a28] text-[#f2ecdd] rounded-lg border border-[#c9b089]/30 shadow-md space-y-3">
-              <div className="flex items-center gap-2 text-xs uppercase tracking-[0.16em] text-[#c9b089] font-bold">
-                <Coffee className="w-4 h-4" />
-                <span>Founder&apos;s Signature Order</span>
-              </div>
-              <p className="font-serif-title text-xl text-[#f2ecdd]">
-                {currentFounder.favoriteDrink}
-              </p>
-              <p className="text-xs text-[#f2ecdd]/75 leading-relaxed">
-                Handcrafted upon order every morning at the Zen Cafe counter by AIUB Gate.
-              </p>
-              <div className="pt-1">
-                <button
-                  onClick={() => onNavigate('menu')}
-                  className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#c9b089] hover:text-[#f2ecdd] transition-colors cursor-pointer"
-                >
-                  <span>See item on menu</span>
-                  <ArrowUpRight className="w-3.5 h-3.5" />
-                </button>
-              </div>
-            </div>
           </div>
 
           {/* Right Column: Life Philosophy, Story, Work & Education */}
@@ -326,6 +310,11 @@ export const FounderDetailView: React.FC<FounderDetailViewProps> = ({
               <h2 className="font-serif-title text-2xl sm:text-3xl text-[#1b2317] font-normal italic leading-snug">
                 &ldquo;{currentFounder.motto}&rdquo;
               </h2>
+              {currentFounder.mottoDetails && (
+                <p className="mt-4 text-[#5f5b48] leading-relaxed">
+                  {currentFounder.mottoDetails}
+                </p>
+              )}
               {currentFounder.mottoHashtags && currentFounder.mottoHashtags.length > 0 && (
                 <div className="flex items-center gap-2 mt-3 text-xs font-semibold text-[#2f3a28]/70">
                   {currentFounder.mottoHashtags.map((tag) => (
@@ -349,11 +338,16 @@ export const FounderDetailView: React.FC<FounderDetailViewProps> = ({
             <div className="space-y-4">
               <div className="eyebrow">The Story &amp; Vision</div>
               <h3 className="font-serif-title text-3xl font-normal text-[#1b2317]">
-                Crafting a quiet corner in Kuratoli
+                {currentFounder.storyTitle || 'Crafting a quiet corner in Kuratoli'}
               </h3>
               <p className="text-[#5f5b48] leading-relaxed text-base">
                 {currentFounder.story}
               </p>
+              {currentFounder.storyClosing && (
+                <p className="text-[#1b2317] leading-relaxed text-base font-semibold">
+                  {currentFounder.storyClosing}
+                </p>
+              )}
               <p className="text-[#5f5b48] leading-relaxed text-base">
                 {currentFounder.zenRoleDescription}
               </p>
@@ -381,9 +375,21 @@ export const FounderDetailView: React.FC<FounderDetailViewProps> = ({
                         </span>
                       )}
                     </div>
-                    <p className="text-sm font-medium text-[#2f3a28]">
-                      {w.organization}
-                    </p>
+                    {w.organizationUrl ? (
+                      <a
+                        href={w.organizationUrl}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="text-sm font-medium text-[#2f3a28] hover:text-[#a67c52] transition-colors inline-flex items-center gap-1"
+                      >
+                        {w.organization}
+                        <ArrowUpRight className="w-3 h-3" />
+                      </a>
+                    ) : (
+                      <p className="text-sm font-medium text-[#2f3a28]">
+                        {w.organization}
+                      </p>
+                    )}
                     {w.details && (
                       <p className="text-xs text-[#5f5b48] leading-relaxed pt-1">
                         {w.details}
@@ -432,21 +438,8 @@ export const FounderDetailView: React.FC<FounderDetailViewProps> = ({
                 onClick={() => onNavigate('contact')}
                 className="btn btn-solid"
               >
-                <MapPin className="w-4 h-4" />
-                <span>Visit Us at Kuratoli</span>
-              </button>
-              <button
-                onClick={() => onNavigate('menu')}
-                className="btn btn-outline"
-              >
-                <Coffee className="w-4 h-4" />
-                <span>Explore Specialty Menu</span>
-              </button>
-              <button
-                onClick={() => onNavigate('owner')}
-                className="text-xs font-bold uppercase tracking-wider text-[#2f3a28] hover:text-[#c9b089] transition-colors py-2 px-3"
-              >
-                View all 3 founders &rarr;
+                <MessageCircle className="w-4 h-4" />
+                <span>Connect with us</span>
               </button>
             </div>
           </div>
