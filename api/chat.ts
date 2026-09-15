@@ -89,7 +89,7 @@ export default async function handler(request: VercelRequest, response: VercelRe
     ];
 
     const result = await ai.models.generateContent({
-      model: 'gemini-2.0-flash',
+      model: 'gemini-2.5-flash',
       contents: conversation,
       config: {
         systemInstruction: [
@@ -112,7 +112,8 @@ export default async function handler(request: VercelRequest, response: VercelRe
     }
 
     sendJson(response, { answer });
-  } catch {
+  } catch (error) {
+    console.error('[chat-api] Gemini request failed:', error instanceof Error ? error.name : 'UnknownError');
     sendJson(response, { error: 'The cafe assistant is taking a short break. Please try again.' }, 502);
   }
 }
