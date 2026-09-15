@@ -8,6 +8,7 @@ import { ViewType, MenuItem } from './types';
 import { Header } from './components/Header';
 import { Footer } from './components/Footer';
 import { JuiceModal } from './components/JuiceModal';
+import { CafeChatbot } from './components/CafeChatbot';
 import { HomeView } from './views/HomeView';
 import { AboutView } from './views/AboutView';
 import { MenuView } from './views/MenuView';
@@ -136,6 +137,9 @@ export default function App() {
 
       {/* Lightbox / Item Poster Modal */}
       <JuiceModal item={selectedJuice} onClose={handleCloseModal} />
+
+      {/* Floating cafe information assistant */}
+      <CafeChatbot />
     </div>
   );
 }
