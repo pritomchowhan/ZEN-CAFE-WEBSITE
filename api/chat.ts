@@ -26,9 +26,15 @@ interface GeminiResponse {
   }>;
 }
 
+interface GeminiModelListResponse {
+  models?: Array<{
+    name?: unknown;
+    supportedGenerationMethods?: unknown;
+  }>;
+}
+
 const MAX_MESSAGE_LENGTH = 600;
 const MAX_HISTORY_ITEMS = 8;
-const GEMINI_MODELS = ['gemini-2.5-flash-lite', 'gemini-2.5-flash', 'gemini-2.0-flash'];
 const CAFE_KNOWLEDGE = `
 Cafe: Zen Cafe
 Address: Kuratoli, Kuril AIUB Gate, Dhaka, Bangladesh
@@ -59,6 +65,27 @@ const getProviderStatus = (error: unknown) => {
   const candidate = error as { status?: unknown; code?: unknown };
   const status = candidate.status ?? candidate.code;
   return typeof status === 'number' || typeof status === 'string' ? String(status) : 'unknown';
+};
+
+const findAvailableModel = async (apiKey: string) => {
+  const response = await fetch(
+    `https://generativelanguage.googleapis.com/v1beta/models?key=${encodeURIComponent(apiKey)}`,
+  );
+  if (!response.ok) return { model: '', status: response.status };
+
+  const data = await response.json() as GeminiModelListResponse;
+  const model = data.models?.find((candidate) => (
+    typeof candidate.name === 'string' &&
+    candidate.name.startsWith('models/') &&
+    Array.isArray(candidate.supportedGenerationMethods) &&
+    candidate.supportedGenerationMethods.includes('generateContent') &&
+    /flash|pro/i.test(candidate.name)
+  ));
+
+  return {
+    model: typeof model?.name === 'string' ? model.name.replace(/^models\//, '') : '',
+    status: 200,
+  };
 };
 
 export default async function handler(request: VercelRequest, response: VercelResponse): Promise<void> {
@@ -122,25 +149,28 @@ export default async function handler(request: VercelRequest, response: VercelRe
       contents: conversation,
     };
 
-    let geminiResponse: Response | undefined;
-    for (const model of GEMINI_MODELS) {
-      const candidateResponse = await fetch(
-        `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${encodeURIComponent(apiKey)}`,
-        {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(requestBody),
-        },
-      );
-
-      if (candidateResponse.status !== 404) {
-        geminiResponse = candidateResponse;
-        break;
-      }
+    const availableModel = await findAvailableModel(apiKey);
+    if (!availableModel.model) {
+      console.error('[chat-api] No generateContent model available:', { status: availableModel.status });
+      sendJson(response, {
+        error: availableModel.status === 401 || availableModel.status === 403
+          ? 'The Gemini API key was rejected. Check the Vercel GEMINI_API_KEY secret.'
+          : 'No Gemini generateContent model is available for this API key.',
+      }, 502);
+      return;
     }
 
-    if (!geminiResponse || !geminiResponse.ok) {
-      const providerStatus = String(geminiResponse?.status || 404);
+    const geminiResponse = await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models/${availableModel.model}:generateContent?key=${encodeURIComponent(apiKey)}`,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(requestBody),
+      },
+    );
+
+    if (!geminiResponse.ok) {
+      const providerStatus = String(geminiResponse.status);
       console.error('[chat-api] Gemini request failed:', { status: providerStatus });
       sendJson(response, {
         error: providerStatus === '401' || providerStatus === '403'
