@@ -35,6 +35,13 @@ const isValidMessage = (message: ChatMessage) => (
   message.content.length <= MAX_MESSAGE_LENGTH
 );
 
+const getProviderStatus = (error: unknown) => {
+  if (!error || typeof error !== 'object') return 'unknown';
+  const candidate = error as { status?: unknown; code?: unknown };
+  const status = candidate.status ?? candidate.code;
+  return typeof status === 'number' || typeof status === 'string' ? String(status) : 'unknown';
+};
+
 export default async function handler(request: VercelRequest, response: VercelResponse): Promise<void> {
   if (request.method !== 'POST') {
     sendJson(response, { error: 'Method not allowed.' }, 405);
@@ -104,7 +111,19 @@ export default async function handler(request: VercelRequest, response: VercelRe
 
     sendJson(response, { answer });
   } catch (error) {
-    console.error('[chat-api] Gemini request failed:', error instanceof Error ? error.name : 'UnknownError');
-    sendJson(response, { error: 'The cafe assistant is taking a short break. Please try again.' }, 502);
+    const providerStatus = getProviderStatus(error);
+    console.error('[chat-api] Gemini request failed:', {
+      name: error instanceof Error ? error.name : 'UnknownError',
+      status: providerStatus,
+    });
+    sendJson(response, {
+      error: providerStatus === '401' || providerStatus === '403'
+        ? 'The Gemini API key was rejected. Check the Vercel GEMINI_API_KEY secret.'
+        : providerStatus === '404'
+          ? 'The selected Gemini model is unavailable for this API key.'
+          : providerStatus === '429'
+            ? 'The Gemini API quota was reached. Please try again later.'
+            : `The cafe assistant is taking a short break. Please try again. Reference: ${providerStatus}`,
+    }, 502);
   }
 }
