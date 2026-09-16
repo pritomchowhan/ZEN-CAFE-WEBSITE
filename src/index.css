@@ -124,7 +124,27 @@ main, footer, header {
   z-index: -1;
 }
 
-.page-hero-media > .wrap {
+.founder-detail-hero {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  background-color: #1b2317;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.founder-detail-hero::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 18% 12%, rgba(201, 176, 137, 0.18), transparent 32%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.page-hero-media > .wrap,
+.founder-detail-hero > .wrap {
   position: relative;
   z-index: 1;
 }

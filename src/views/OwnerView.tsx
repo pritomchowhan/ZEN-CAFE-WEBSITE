@@ -237,13 +237,6 @@ export const OwnerView: React.FC<OwnerViewProps> = ({
                       <span>See in detail</span>
                       <ArrowUpRight className="w-4 h-4" />
                     </button>
-                    <button
-                      onClick={() => onNavigate('contact')}
-                      className="btn btn-outline"
-                    >
-                      <MapPin className="w-4 h-4" />
-                      <span>Visit our quiet corner</span>
-                    </button>
                   </div>
                 </div>
               </div>

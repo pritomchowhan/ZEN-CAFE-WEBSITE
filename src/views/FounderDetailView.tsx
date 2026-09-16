@@ -39,10 +39,20 @@ export const FounderDetailView: React.FC<FounderDetailViewProps> = ({
   const prevFounder =
     FOUNDERS_DATA[(currentIndex - 1 + FOUNDERS_DATA.length) % FOUNDERS_DATA.length];
 
+  const founderHeroBackground =
+    currentFounder.id === 'niaz'
+      ? "url('/shovon_cover.jpg')"
+      : currentFounder.id === 'minhajul'
+        ? "url('/mishal_cover.jpg')"
+        : "url('/cover_pic.jpg')";
+
   return (
     <div id="view-founder-detail" className="min-h-screen">
       {/* ================= HERO BANNER ================= */}
-      <section className="band-ink on-ink pt-32 pb-16 border-b border-[#c9b089]/20">
+      <section
+        className="founder-detail-hero on-ink pt-32 pb-16 border-b border-[#c9b089]/20"
+        style={{ backgroundImage: `linear-gradient(90deg, rgba(20, 28, 20, 0.8), rgba(20, 28, 20, 0.68), rgba(20, 28, 20, 0.8)), ${founderHeroBackground}` }}
+      >
         <div className="wrap">
           {/* Breadcrumb / Back Link */}
           <div className="flex items-center justify-between flex-wrap gap-4 mb-6">
@@ -84,7 +94,7 @@ export const FounderDetailView: React.FC<FounderDetailViewProps> = ({
                   Verified Profile
                 </span>
               </div>
-              <h1 className="font-serif-title text-4xl sm:text-6xl font-normal leading-tight">
+              <h1 className="font-serif-title text-4xl sm:text-6xl font-normal leading-tight text-[#f2ecdd]">
                 {currentFounder.name}
               </h1>
               <p className="text-base sm:text-xl text-[#c9b089] font-serif-title italic mt-2">
@@ -335,22 +345,28 @@ export const FounderDetailView: React.FC<FounderDetailViewProps> = ({
             </div>
 
             {/* The Zen Cafe Story */}
-            <div className="space-y-4">
+            <div className="space-y-4 max-w-[72ch]">
               <div className="eyebrow">The Story &amp; Vision</div>
               <h3 className="font-serif-title text-3xl font-normal text-[#1b2317]">
                 {currentFounder.storyTitle || 'Crafting a quiet corner in Kuratoli'}
               </h3>
-              <p className="text-[#5f5b48] leading-relaxed text-base">
+              <p className="text-[#5f5b48] leading-relaxed text-base break-words">
                 {currentFounder.story}
               </p>
               {currentFounder.storyClosing && (
-                <p className="text-[#1b2317] leading-relaxed text-base font-semibold">
+                <p className="text-[#1b2317] leading-relaxed text-base font-semibold break-words">
                   {currentFounder.storyClosing}
                 </p>
               )}
-              <p className="text-[#5f5b48] leading-relaxed text-base">
-                {currentFounder.zenRoleDescription}
-              </p>
+              {currentFounder.id === 'pritom' ? (
+                <p className="text-[#5f5b48] leading-relaxed text-base break-words">
+                  <strong>{currentFounder.zenRoleDescription}</strong>
+                </p>
+              ) : (
+                <p className="text-[#5f5b48] leading-relaxed text-base break-words">
+                  {currentFounder.zenRoleDescription}
+                </p>
+              )}
             </div>
 
             {/* Work & Career Experience */}

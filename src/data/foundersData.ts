@@ -52,7 +52,7 @@ export const FOUNDERS_DATA: FounderProfile[] = [
         details: 'Bachelor of Computer Science and Engineering.',
       },
       {
-        institution: 'Cambrian Debating Society - CDS',
+        institution: 'Cambrian School & College',
         details: 'Oratory, critical thinking, and communication leadership.',
       },
       {
@@ -62,12 +62,13 @@ export const FOUNDERS_DATA: FounderProfile[] = [
     ],
     storyTitle: 'Still Becoming.',
     story:
-      'I believe life is less about having everything figured out and more about becoming a better version of yourself, one experience at a time. I like creating things, learning from mistakes, questioning what already exists, and turning simple ideas into something meaningful.',
-    storyClosing: "I don't want to simply pass through life. I want to leave something behind that feels genuinely mine.",
+      'Pritom Chowhan approaches Zen Café as more than a café project—shaping its identity through thoughtful design, atmosphere, and experience. His work focuses on turning ideas into a cohesive space where visual harmony, sound, comfort, and community come together naturally.',
+    storyClosing:
+      'Through continuous experimentation and attention to detail, he contributes to the café’s brand direction, creative development, and overall guest experience—always looking for ways to make something simple feel meaningful.',
     philosophy:
       'Patience in craft, heart in hospitality, and never doing anything by halves.',
     zenRoleDescription:
-      'Curates the cafe brand vision, interior visual harmony, acoustic balance, and community culture.',
+      'His work is driven by one idea: build with purpose, improve with every experience, and create something that feels genuinely his.',
     favoriteDrink: 'Raw Mango Natural Juice & Fresh Cappuccino',
     favoriteDrinkId: 'raw-mango',
   },
@@ -80,7 +81,7 @@ export const FOUNDERS_DATA: FounderProfile[] = [
     image: shovonImg,
     fallbackImage: '/niaz_shovon.jpg',
     bio: 'Curious by nature, always learning, creating, and becoming.',
-    motto: '“Try to be better than yourself.” — William Faulkner',
+    motto: 'Try to be better than yourself.” — William Faulkner',
     livesIn: 'Dhaka, Bangladesh',
     from: 'Bhola, Barisal, Bangladesh',
     birthday: 'December 29, 2000',
@@ -153,6 +154,11 @@ export const FOUNDERS_DATA: FounderProfile[] = [
       },
     ],
     education: [
+      
+      {
+        institution: 'United International University',
+        details: 'Bachelor of Computer Science and Engineering.',
+      },
       {
         institution: 'Nikunja Model College',
         year: 'Class of 2019',
@@ -160,10 +166,6 @@ export const FOUNDERS_DATA: FounderProfile[] = [
       {
         institution: 'Bangladesh Railway Govt. high school ,Akhaura , 2009',
         year: 'Class of 2017',
-      },
-      {
-        institution: 'United International University',
-        details: 'Bachelor of Computer Science and Engineering.',
       },
     ],
     story:
