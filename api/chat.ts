@@ -159,18 +159,16 @@ export default async function handler(request: VercelRequest, response: VercelRe
     sendJson(response, { answer });
   } catch (error) {
     const providerStatus = getProviderStatus(error);
-    console.error('[chat-api] Gemini request failed:', {
+    console.error('[chat-api] OpenRouter request failed:', {
       name: error instanceof Error ? error.name : 'UnknownError',
       status: providerStatus,
     });
     sendJson(response, {
       error: providerStatus === '401' || providerStatus === '403'
-        ? 'The Gemini API key was rejected. Check the Vercel GEMINI_API_KEY secret.'
-        : providerStatus === '404'
-          ? 'The selected Gemini model is unavailable for this API key.'
-          : providerStatus === '429'
-            ? 'The Gemini API quota was reached. Please try again later.'
-            : `The cafe assistant is taking a short break. Please try again. Reference: ${providerStatus}`,
+        ? 'The OpenRouter API key was rejected. Check the Vercel OPENROUTER_API_KEY secret.'
+        : providerStatus === '429'
+          ? 'The AI quota was reached. Please try again later.'
+          : `The cafe assistant is taking a short break. Please try again. Reference: ${providerStatus}`,
     }, 502);
   }
 }
