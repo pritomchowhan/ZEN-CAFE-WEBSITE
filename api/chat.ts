@@ -175,14 +175,32 @@ export default async function handler(request: VercelRequest, response: VercelRe
       return;
     }
 
-    const geminiResponse = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/${availableModel.model}:generateContent?key=${encodeURIComponent(apiKey)}`,
-      {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(requestBody),
-      },
-    );
+    const modelsToTry = [
+      availableModel.model,
+      ...DEFAULT_MODEL_CANDIDATES.filter((candidate) => candidate !== availableModel.model),
+    ];
+    let geminiResponse: Response | undefined;
+
+    for (const model of modelsToTry) {
+      const response = await fetch(
+        `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${encodeURIComponent(apiKey)}`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(requestBody),
+        },
+      );
+
+      if (response.ok || (response.status !== 404 && response.status !== 400)) {
+        geminiResponse = response;
+        break;
+      }
+    }
+
+    if (!geminiResponse) {
+      sendJson(response, { error: 'No supported Gemini model is available for this API key.' }, 502);
+      return;
+    }
 
     if (!geminiResponse.ok) {
       const providerStatus = String(geminiResponse.status);

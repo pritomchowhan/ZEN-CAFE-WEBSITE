@@ -149,4 +149,53 @@ describe('chat API', () => {
     assert.equal(statusCode, 200);
     assert.equal(jsonBody?.answer, 'Fallback worked.');
   });
+
+  it('tries another model when the selected model is unavailable', async () => {
+    process.env.GEMINI_API_KEY = 'fake-key';
+    const requestedModels: string[] = [];
+
+    global.fetch = (async (input: string | URL | Request) => {
+      const url = String(input);
+
+      if (url.includes('/models?')) {
+        return {
+          ok: true,
+          json: async () => ({
+            models: [{ name: 'models/gemini-2.5-flash', supportedGenerationMethods: ['generateContent'] }],
+          }),
+        } as Response;
+      }
+
+      const modelMatch = url.match(/models\/([^:]+):generateContent/);
+      requestedModels.push(modelMatch?.[1] || '');
+      if (modelMatch?.[1] === 'gemini-2.5-flash') {
+        return { ok: false, status: 404, json: async () => ({}) } as Response;
+      }
+
+      return {
+        ok: true,
+        json: async () => ({ candidates: [{ content: { parts: [{ text: 'Second model worked.' }] } }] }),
+      } as Response;
+    }) as typeof fetch;
+
+    let statusCode = 0;
+    let jsonBody: Record<string, unknown> | undefined;
+    const response = {
+      status: (code: number) => ({
+        json: (body: Record<string, unknown>) => {
+          statusCode = code;
+          jsonBody = body;
+        },
+      }),
+    };
+
+    await handler(
+      { method: 'POST', body: JSON.stringify({ message: 'Hi' }) } as any,
+      response as any,
+    );
+
+    assert.deepEqual(requestedModels.slice(0, 2), ['gemini-2.5-flash', 'gemini-2.0-flash']);
+    assert.equal(statusCode, 200);
+    assert.equal(jsonBody?.answer, 'Second model worked.');
+  });
 });
