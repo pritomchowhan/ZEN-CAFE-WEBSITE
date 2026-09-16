@@ -98,4 +98,55 @@ describe('chat API', () => {
     assert.equal(statusCode, 200);
     assert.equal(jsonBody?.answer, 'Hello from Zen Cafe.');
   });
+
+  it('tries the fallback model when the model list request is unavailable', async () => {
+    process.env.GEMINI_API_KEY = 'fake-key';
+
+    global.fetch = (async (input: string | URL | Request) => {
+      const url = String(input);
+
+      if (url.includes('/models?')) {
+        return {
+          ok: false,
+          status: 500,
+          json: async () => ({ error: 'model list unavailable' }),
+        } as Response;
+      }
+
+      if (url.includes(':generateContent')) {
+        assert.match(url, /models\/gemini-2\.5-flash:generateContent/);
+        return {
+          ok: true,
+          json: async () => ({
+            candidates: [{ content: { parts: [{ text: 'Fallback worked.' }] } }],
+          }),
+        } as Response;
+      }
+
+      return {
+        ok: false,
+        status: 500,
+        json: async () => ({ error: 'unexpected call' }),
+      } as Response;
+    }) as typeof fetch;
+
+    let statusCode = 0;
+    let jsonBody: Record<string, unknown> | undefined;
+    const response = {
+      status: (code: number) => ({
+        json: (body: Record<string, unknown>) => {
+          statusCode = code;
+          jsonBody = body;
+        },
+      }),
+    };
+
+    await handler(
+      { method: 'POST', body: JSON.stringify({ message: 'Hi' }) } as any,
+      response as any,
+    );
+
+    assert.equal(statusCode, 200);
+    assert.equal(jsonBody?.answer, 'Fallback worked.');
+  });
 });

@@ -79,7 +79,8 @@ const findAvailableModel = async (apiKey: string) => {
   const response = await fetch(
     `https://generativelanguage.googleapis.com/v1beta/models?key=${encodeURIComponent(apiKey)}`,
   );
-  if (!response.ok) return { model: '', status: response.status };
+  const fallbackModel = DEFAULT_MODEL_CANDIDATES[0] || '';
+  if (!response.ok) return { model: fallbackModel, status: response.status };
 
   const data = await response.json() as GeminiModelListResponse;
 
@@ -90,14 +91,14 @@ const findAvailableModel = async (apiKey: string) => {
     candidate.supportedGenerationMethods.includes('generateContent')
   ));
 
-  const fallbackModel = DEFAULT_MODEL_CANDIDATES.find((candidate) =>
+  const availableFallbackModel = DEFAULT_MODEL_CANDIDATES.find((candidate) =>
     candidate.length > 0,
   );
 
   return {
     model: typeof preferredModel?.name === 'string'
       ? preferredModel.name.replace(/^models\//, '')
-      : fallbackModel || '',
+      : availableFallbackModel || '',
     status: 200,
   };
 };
