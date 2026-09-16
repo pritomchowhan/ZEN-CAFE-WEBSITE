@@ -28,6 +28,12 @@ interface OpenRouterResponse {
   }>;
 }
 
+interface AssistantLink {
+  label: string;
+  href: string;
+  external?: boolean;
+}
+
 interface MenuAssistantItem {
   name: string;
   price: string;
@@ -66,6 +72,25 @@ const MENU_ASSISTANT_ITEMS: MenuAssistantItem[] = [
   { name: 'Iced Latte', price: '125-145 Taka', image: '/Iced latte.jpeg', availability: 'Available' },
   { name: 'Mocha', price: '185 Taka', image: '/Mocha.jpeg', availability: 'Available' },
 ];
+
+const FOUNDER_ASSISTANT_LINKS: Record<string, AssistantLink[]> = {
+  pritom: [
+    { label: 'Pritom profile', href: '/#founder-pritom' },
+    { label: 'Instagram', href: 'https://www.instagram.com/pritom_chowhan/', external: true },
+    { label: 'Facebook', href: 'https://www.facebook.com/imkingpritom/', external: true },
+    { label: 'LinkedIn', href: 'https://www.linkedin.com/in/pritom-chowhan-80088a1b1/', external: true },
+  ],
+  shovon: [
+    { label: 'Shovon profile', href: '/#founder-niaz' },
+    { label: 'Instagram', href: 'https://www.instagram.com/niaazzz___/', external: true },
+    { label: 'Facebook', href: 'https://www.facebook.com/shikder.mahmmud', external: true },
+  ],
+  minhajul: [
+    { label: 'Minhajul profile', href: '/#founder-minhajul' },
+    { label: 'Instagram', href: 'https://www.instagram.com/minhaj_1204/', external: true },
+    { label: 'Facebook', href: 'https://www.facebook.com/minhajul.huda.1204', external: true },
+  ],
+};
 const CAFE_KNOWLEDGE = `
 Cafe: Zen Cafe
 Address: Kuratoli, Kuril AIUB Gate, Dhaka, Bangladesh
@@ -78,6 +103,9 @@ Fresh juice menu: Raw Mango Juice (85 Taka), Ripe Mango Juice / Shake (95 Taka),
 Tea, Breakfast, and Desserts: COMMING SOON.
 Specials: Espresso, Ripe Mango Juice / Shake, Mint Lemonade (Mint Lemonte), and Latte.
 Founders: Pritom Chowhan, Niaz Mahmud Shovon, and Minhajul Huda.
+Founder profiles: Pritom Chowhan is Co-Founder & Creative Director, based in Dhaka and from Akhaura, Brahmanbaria. Niaz Mahmud Shovon is Co-Founder & Operations Lead, based in Dhaka and from Bhola, Barisal. Minhajul Huda is Co-Founder & Community Experience, based in Rampur, Dhaka and from Akhaura, Chittagong.
+Founder roles: Pritom shapes brand identity and creative direction. Shovon leads hospitality, counter operations, sourcing, and supplier relationships. Minhajul curates the atmosphere, student community experience, photo gallery, and private gatherings.
+Public website sections: Home, About, Menu, Gallery, Contact, Founders, and individual founder profiles.
 `.trim();
 
 const sendJson = (response: VercelResponse, body: Record<string, unknown>, status = 200) => {
@@ -106,6 +134,36 @@ const findMentionedMenuItems = (message: string) => {
       name === 'mint lemonade' && normalizedMessage.includes('mint lemonte')
     );
   });
+};
+
+const findAssistantLinks = (message: string): AssistantLink[] => {
+  const normalizedMessage = message.toLowerCase();
+  const links: AssistantLink[] = [];
+
+  if (normalizedMessage.includes('menu') || normalizedMessage.includes('price') || normalizedMessage.includes('item')) {
+    links.push({ label: 'View full menu', href: '/#menu' });
+  }
+  if (normalizedMessage.includes('hour') || normalizedMessage.includes('open') || normalizedMessage.includes('location') || normalizedMessage.includes('address') || normalizedMessage.includes('direction') || normalizedMessage.includes('way')) {
+    links.push({ label: 'Contact & hours', href: '/#contact' });
+    links.push({ label: 'Get directions', href: 'https://maps.app.goo.gl/UfPPFQo2Mo1EB7z2A', external: true });
+  }
+  if (normalizedMessage.includes('gallery') || normalizedMessage.includes('picture') || normalizedMessage.includes('photo')) {
+    links.push({ label: 'View gallery', href: '/#gallery' });
+  }
+
+  const founderKey = normalizedMessage.includes('pritom')
+    ? 'pritom'
+    : normalizedMessage.includes('shovon') || normalizedMessage.includes('niaz')
+      ? 'shovon'
+      : normalizedMessage.includes('minhaj')
+        ? 'minhajul'
+        : '';
+  if (founderKey) links.push(...(FOUNDER_ASSISTANT_LINKS[founderKey] || []));
+  if (normalizedMessage.includes('founder') || normalizedMessage.includes('owner') || normalizedMessage.includes('team')) {
+    links.unshift({ label: 'Meet the founders', href: '/#owner' });
+  }
+
+  return links.filter((link, index, allLinks) => allLinks.findIndex((candidate) => candidate.href === link.href) === index);
 };
 
 const findOpenRouterModel = async (apiKey: string) => {
@@ -228,7 +286,11 @@ export default async function handler(request: VercelRequest, response: VercelRe
       return;
     }
 
-    sendJson(response, { answer: answer.replace(/\*\*/g, ''), items: findMentionedMenuItems(message) });
+    sendJson(response, {
+      answer: answer.replace(/\*\*/g, ''),
+      items: findMentionedMenuItems(message),
+      links: findAssistantLinks(message),
+    });
   } catch (error) {
     const providerStatus = getProviderStatus(error);
     console.error('[chat-api] OpenRouter request failed:', {

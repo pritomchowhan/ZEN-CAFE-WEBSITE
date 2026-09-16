@@ -85,4 +85,23 @@ describe('chat API', () => {
     assert.equal(result.getStatus(), 502);
     assert.match(String(result.getBody()?.error), /OPENROUTER_API_KEY/);
   });
+
+  it('adds public navigation links for founder questions', async () => {
+    process.env.OPENROUTER_API_KEY = 'fake-key';
+    global.fetch = (async () => ({
+      ok: true,
+      json: async () => ({ choices: [{ message: { content: 'Pritom is the creative director.' } }] }),
+    }) as Response) as typeof fetch;
+    const result = makeResponse();
+
+    await handler(
+      { method: 'POST', body: JSON.stringify({ message: 'Tell me about Pritom Chowhan' }) } as any,
+      result.response as any,
+    );
+
+    const links = result.getBody()?.links as Array<{ label: string; href: string }>;
+    assert.equal(result.getStatus(), 200);
+    assert.ok(links.some((link) => link.href === '/#founder-pritom'));
+    assert.ok(links.some((link) => link.href === 'https://www.instagram.com/pritom_chowhan/'));
+  });
 });

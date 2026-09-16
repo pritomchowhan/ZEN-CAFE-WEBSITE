@@ -12,6 +12,7 @@ interface ChatMessage {
     image: string;
     availability: string;
   }>;
+  links?: Array<{ label: string; href: string; external?: boolean }>;
 }
 
 const welcomeMessage: ChatMessage = {
@@ -46,11 +47,11 @@ export const CafeChatbot: React.FC = () => {
         }),
       });
       const responseText = await response.text();
-      let data: { answer?: string; error?: string; items?: ChatMessage['items'] } = {};
+      let data: { answer?: string; error?: string; items?: ChatMessage['items']; links?: ChatMessage['links'] } = {};
 
       if (responseText.trim()) {
         try {
-          data = JSON.parse(responseText) as { answer?: string; error?: string };
+          data = JSON.parse(responseText) as { answer?: string; error?: string; items?: ChatMessage['items']; links?: ChatMessage['links'] };
         } catch {
           throw new Error(`The assistant returned an invalid response (${response.status}).`);
         }
@@ -64,6 +65,7 @@ export const CafeChatbot: React.FC = () => {
         role: 'model',
         content: (data.answer as string).replace(/\*\*/g, ''),
         items: data.items,
+        links: data.links,
       }]);
     } catch (error) {
       setMessages((current) => [
@@ -112,7 +114,7 @@ export const CafeChatbot: React.FC = () => {
                 className={`flex ${chatMessage.role === 'user' ? 'justify-end' : 'justify-start'}`}
               >
                 <div
-                  className={`max-w-[86%] rounded-2xl px-3.5 py-2.5 text-sm leading-relaxed ${
+                  className={`chat-reply max-w-[86%] rounded-2xl px-3.5 py-2.5 text-sm leading-relaxed ${
                     chatMessage.role === 'user'
                       ? 'rounded-br-sm bg-[#2f3a28] text-[#f2ecdd]'
                       : 'rounded-bl-sm border border-[#262f1f]/10 bg-white/70 text-[#262f1f]'
@@ -129,6 +131,21 @@ export const CafeChatbot: React.FC = () => {
                             <p className="text-xs text-[#5f5b48]">{item.price} · {item.availability}</p>
                           </div>
                         </div>
+                      ))}
+                    </div>
+                  )}
+                  {chatMessage.links && chatMessage.links.length > 0 && (
+                    <div className="mt-3 flex flex-wrap gap-1.5">
+                      {chatMessage.links.map((link) => (
+                        <a
+                          key={link.href}
+                          href={link.href}
+                          target={link.external ? '_blank' : undefined}
+                          rel={link.external ? 'noreferrer' : undefined}
+                          className="rounded-full border border-[#a67c52]/40 bg-[#c9b089]/25 px-2.5 py-1 text-[11px] font-semibold text-[#4d5b3e] transition-colors hover:bg-[#c9b089]/55"
+                        >
+                          {link.label} {link.external ? '↗' : '→'}
+                        </a>
                       ))}
                     </div>
                   )}
