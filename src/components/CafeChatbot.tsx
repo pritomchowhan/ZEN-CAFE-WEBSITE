@@ -1,5 +1,5 @@
 import React, { FormEvent, useState } from 'react';
-import { Bot, Coffee, MessageCircle, Send, X } from 'lucide-react';
+import { Bot, MessageCircle, Send, X } from 'lucide-react';
 
 type ChatRole = 'user' | 'model';
 
@@ -89,8 +89,8 @@ export const CafeChatbot: React.FC = () => {
         >
           <header className="flex items-center justify-between bg-[#1b2317] px-5 py-4 text-[#f2ecdd]">
             <div className="flex items-center gap-3">
-              <div className="flex h-9 w-9 items-center justify-center rounded-full bg-[#c9b089] text-[#1b2317]">
-                <Coffee className="h-4 w-4" />
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-full bg-[#c9b089] p-1">
+                <img src="/Zen-Cafe.png" alt="Zen Cafe logo" className="h-full w-full object-contain" />
               </div>
               <div>
                 <h2 className="font-serif-title text-lg">Zen Cafe Assistant</h2>
