@@ -45,6 +45,12 @@ describe('chat API', () => {
     let requestedUrl = '';
     global.fetch = (async (input: string | URL | Request) => {
       requestedUrl = String(input);
+      if (requestedUrl.endsWith('/models')) {
+        return {
+          ok: true,
+          json: async () => ({ data: [{ id: 'test/free-model:free' }] }),
+        } as Response;
+      }
       return {
         ok: true,
         json: async () => ({ choices: [{ message: { content: 'Hello from Zen Cafe.' } }] }),

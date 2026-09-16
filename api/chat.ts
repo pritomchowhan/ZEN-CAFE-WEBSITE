@@ -28,6 +28,16 @@ interface OpenRouterResponse {
   }>;
 }
 
+interface OpenRouterModelListResponse {
+  data?: Array<{
+    id?: unknown;
+    pricing?: {
+      prompt?: unknown;
+      completion?: unknown;
+    };
+  }>;
+}
+
 const MAX_MESSAGE_LENGTH = 600;
 const MAX_HISTORY_ITEMS = 8;
 const DEFAULT_OPENROUTER_MODEL = 'openrouter/free';
@@ -61,6 +71,31 @@ const getProviderStatus = (error: unknown) => {
   const candidate = error as { status?: unknown; code?: unknown };
   const status = candidate.status ?? candidate.code;
   return typeof status === 'number' || typeof status === 'string' ? String(status) : 'unknown';
+};
+
+const findOpenRouterModel = async (apiKey: string) => {
+  const configuredModel = process.env.OPENROUTER_MODEL;
+  if (configuredModel && configuredModel !== DEFAULT_OPENROUTER_MODEL) return configuredModel;
+
+  try {
+    const modelResponse = await fetch('https://openrouter.ai/api/v1/models', {
+      headers: { Authorization: `Bearer ${apiKey}` },
+    });
+    if (modelResponse.ok) {
+      const modelList = await modelResponse.json() as OpenRouterModelListResponse;
+      const freeModel = modelList.data?.find((model) => (
+        typeof model.id === 'string' &&
+        (model.id.endsWith(':free') || (model.pricing?.prompt === '0' && model.pricing?.completion === '0'))
+      ));
+      if (typeof freeModel?.id === 'string') return freeModel.id;
+    }
+  } catch (error) {
+    console.error('[chat-api] OpenRouter model discovery failed:', {
+      name: error instanceof Error ? error.name : 'UnknownError',
+    });
+  }
+
+  return configuredModel || DEFAULT_OPENROUTER_MODEL;
 };
 
 export default async function handler(request: VercelRequest, response: VercelResponse): Promise<void> {
@@ -120,7 +155,7 @@ export default async function handler(request: VercelRequest, response: VercelRe
     ];
 
     const requestBody = {
-      model: process.env.OPENROUTER_MODEL || DEFAULT_OPENROUTER_MODEL,
+      model: await findOpenRouterModel(apiKey),
       messages: conversation,
     };
 
