@@ -7,195 +7,76 @@ describe('chat API', () => {
 
   afterEach(() => {
     global.fetch = originalFetch;
-    delete process.env.GEMINI_API_KEY;
+    delete process.env.OPENROUTER_API_KEY;
   });
 
-  it('returns a clear configuration error when Gemini is unavailable', async () => {
-    delete process.env.GEMINI_API_KEY;
-
+  const makeResponse = () => {
     let statusCode = 0;
     let jsonBody: Record<string, unknown> | undefined;
-
-    const response = {
-      status: (code: number) => ({
-        json: (body: Record<string, unknown>) => {
-          statusCode = code;
-          jsonBody = body;
-        },
-      }),
+    return {
+      response: {
+        status: (code: number) => ({
+          json: (body: Record<string, unknown>) => {
+            statusCode = code;
+            jsonBody = body;
+          },
+        }),
+      },
+      getStatus: () => statusCode,
+      getBody: () => jsonBody,
     };
+  };
+
+  it('returns a configuration error when OpenRouter is unavailable', async () => {
+    delete process.env.OPENROUTER_API_KEY;
+    const result = makeResponse();
 
     await handler(
-      {
-        method: 'POST',
-        body: JSON.stringify({ message: 'What time are you open?' }),
-      } as any,
-      response as any,
+      { method: 'POST', body: JSON.stringify({ message: 'What time are you open?' }) } as any,
+      result.response as any,
     );
 
-    assert.equal(statusCode, 503);
-    assert.equal(jsonBody?.error, 'The cafe assistant is not configured yet.');
+    assert.equal(result.getStatus(), 503);
+    assert.match(String(result.getBody()?.error), /OPENROUTER_API_KEY/);
   });
 
-  it('accepts a valid Gemini generateContent model even when the API does not return a flash/pro name', async () => {
-    process.env.GEMINI_API_KEY = 'fake-key';
-
+  it('returns the assistant answer from OpenRouter', async () => {
+    process.env.OPENROUTER_API_KEY = 'fake-key';
+    let requestedUrl = '';
     global.fetch = (async (input: string | URL | Request) => {
-      const url = String(input);
-
-      if (url.includes('/models?')) {
-        return {
-          ok: true,
-          json: async () => ({
-            models: [{
-              name: 'models/gemini-2.5-flash',
-              supportedGenerationMethods: ['generateContent'],
-            }],
-          }),
-        } as Response;
-      }
-
-      if (url.includes(':generateContent')) {
-        return {
-          ok: true,
-          json: async () => ({
-            candidates: [{
-              content: {
-                parts: [{ text: 'Hello from Zen Cafe.' }],
-              },
-            }],
-          }),
-        } as Response;
-      }
-
-      return {
-        ok: false,
-        status: 500,
-        json: async () => ({ error: 'unexpected call' }),
-      } as Response;
-    }) as typeof fetch;
-
-    let statusCode = 0;
-    let jsonBody: Record<string, unknown> | undefined;
-
-    const response = {
-      status: (code: number) => ({
-        json: (body: Record<string, unknown>) => {
-          statusCode = code;
-          jsonBody = body;
-        },
-      }),
-    };
-
-    await handler(
-      {
-        method: 'POST',
-        body: JSON.stringify({ message: 'Hi' }),
-      } as any,
-      response as any,
-    );
-
-    assert.equal(statusCode, 200);
-    assert.equal(jsonBody?.answer, 'Hello from Zen Cafe.');
-  });
-
-  it('tries the fallback model when the model list request is unavailable', async () => {
-    process.env.GEMINI_API_KEY = 'fake-key';
-
-    global.fetch = (async (input: string | URL | Request) => {
-      const url = String(input);
-
-      if (url.includes('/models?')) {
-        return {
-          ok: false,
-          status: 500,
-          json: async () => ({ error: 'model list unavailable' }),
-        } as Response;
-      }
-
-      if (url.includes(':generateContent')) {
-        assert.match(url, /models\/gemini-2\.5-flash:generateContent/);
-        return {
-          ok: true,
-          json: async () => ({
-            candidates: [{ content: { parts: [{ text: 'Fallback worked.' }] } }],
-          }),
-        } as Response;
-      }
-
-      return {
-        ok: false,
-        status: 500,
-        json: async () => ({ error: 'unexpected call' }),
-      } as Response;
-    }) as typeof fetch;
-
-    let statusCode = 0;
-    let jsonBody: Record<string, unknown> | undefined;
-    const response = {
-      status: (code: number) => ({
-        json: (body: Record<string, unknown>) => {
-          statusCode = code;
-          jsonBody = body;
-        },
-      }),
-    };
-
-    await handler(
-      { method: 'POST', body: JSON.stringify({ message: 'Hi' }) } as any,
-      response as any,
-    );
-
-    assert.equal(statusCode, 200);
-    assert.equal(jsonBody?.answer, 'Fallback worked.');
-  });
-
-  it('tries another model when the selected model is unavailable', async () => {
-    process.env.GEMINI_API_KEY = 'fake-key';
-    const requestedModels: string[] = [];
-
-    global.fetch = (async (input: string | URL | Request) => {
-      const url = String(input);
-
-      if (url.includes('/models?')) {
-        return {
-          ok: true,
-          json: async () => ({
-            models: [{ name: 'models/gemini-2.5-flash', supportedGenerationMethods: ['generateContent'] }],
-          }),
-        } as Response;
-      }
-
-      const modelMatch = url.match(/models\/([^:]+):generateContent/);
-      requestedModels.push(modelMatch?.[1] || '');
-      if (modelMatch?.[1] === 'gemini-2.5-flash') {
-        return { ok: false, status: 404, json: async () => ({}) } as Response;
-      }
-
+      requestedUrl = String(input);
       return {
         ok: true,
-        json: async () => ({ candidates: [{ content: { parts: [{ text: 'Second model worked.' }] } }] }),
+        json: async () => ({ choices: [{ message: { content: 'Hello from Zen Cafe.' } }] }),
       } as Response;
     }) as typeof fetch;
-
-    let statusCode = 0;
-    let jsonBody: Record<string, unknown> | undefined;
-    const response = {
-      status: (code: number) => ({
-        json: (body: Record<string, unknown>) => {
-          statusCode = code;
-          jsonBody = body;
-        },
-      }),
-    };
+    const result = makeResponse();
 
     await handler(
       { method: 'POST', body: JSON.stringify({ message: 'Hi' }) } as any,
-      response as any,
+      result.response as any,
     );
 
-    assert.deepEqual(requestedModels.slice(0, 2), ['gemini-2.5-flash', 'gemini-2.0-flash']);
-    assert.equal(statusCode, 200);
-    assert.equal(jsonBody?.answer, 'Second model worked.');
+    assert.equal(requestedUrl, 'https://openrouter.ai/api/v1/chat/completions');
+    assert.equal(result.getStatus(), 200);
+    assert.equal(result.getBody()?.answer, 'Hello from Zen Cafe.');
+  });
+
+  it('reports rejected OpenRouter credentials clearly', async () => {
+    process.env.OPENROUTER_API_KEY = 'fake-key';
+    global.fetch = (async () => ({
+      ok: false,
+      status: 401,
+      json: async () => ({ error: 'unauthorized' }),
+    }) as Response) as typeof fetch;
+    const result = makeResponse();
+
+    await handler(
+      { method: 'POST', body: JSON.stringify({ message: 'Hi' }) } as any,
+      result.response as any,
+    );
+
+    assert.equal(result.getStatus(), 502);
+    assert.match(String(result.getBody()?.error), /OPENROUTER_API_KEY/);
   });
 });
