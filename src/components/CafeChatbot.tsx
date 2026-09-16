@@ -6,6 +6,12 @@ type ChatRole = 'user' | 'model';
 interface ChatMessage {
   role: ChatRole;
   content: string;
+  items?: Array<{
+    name: string;
+    price: string;
+    image: string;
+    availability: string;
+  }>;
 }
 
 const welcomeMessage: ChatMessage = {
@@ -40,7 +46,7 @@ export const CafeChatbot: React.FC = () => {
         }),
       });
       const responseText = await response.text();
-      let data: { answer?: string; error?: string } = {};
+      let data: { answer?: string; error?: string; items?: ChatMessage['items'] } = {};
 
       if (responseText.trim()) {
         try {
@@ -54,7 +60,11 @@ export const CafeChatbot: React.FC = () => {
         throw new Error(data.error || `The assistant could not answer right now (${response.status}).`);
       }
 
-      setMessages((current) => [...current, { role: 'model', content: data.answer as string }]);
+      setMessages((current) => [...current, {
+        role: 'model',
+        content: (data.answer as string).replace(/\*\*/g, ''),
+        items: data.items,
+      }]);
     } catch (error) {
       setMessages((current) => [
         ...current,
@@ -108,7 +118,20 @@ export const CafeChatbot: React.FC = () => {
                       : 'rounded-bl-sm border border-[#262f1f]/10 bg-white/70 text-[#262f1f]'
                   }`}
                 >
-                  {chatMessage.content}
+                  <p className="whitespace-pre-line">{chatMessage.content}</p>
+                  {chatMessage.items && chatMessage.items.length > 0 && (
+                    <div className="mt-3 space-y-2">
+                      {chatMessage.items.map((item) => (
+                        <div key={item.name} className="flex items-center gap-2 rounded-xl border border-[#262f1f]/10 bg-[#f5efe3]/80 p-2">
+                          <img src={item.image} alt={item.name} className="h-12 w-12 shrink-0 rounded-lg object-cover" />
+                          <div className="min-w-0">
+                            <p className="truncate text-xs font-semibold">{item.name}</p>
+                            <p className="text-xs text-[#5f5b48]">{item.price} · {item.availability}</p>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
               </div>
             ))}
