@@ -30,7 +30,7 @@ interface OpenRouterResponse {
 
 const MAX_MESSAGE_LENGTH = 600;
 const MAX_HISTORY_ITEMS = 8;
-const DEFAULT_OPENROUTER_MODEL = 'openai/gpt-oss-20b:free';
+const DEFAULT_OPENROUTER_MODEL = 'openrouter/free';
 const CAFE_KNOWLEDGE = `
 Cafe: Zen Cafe
 Address: Kuratoli, Kuril AIUB Gate, Dhaka, Bangladesh
