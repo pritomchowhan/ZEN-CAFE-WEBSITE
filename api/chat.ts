@@ -1,3 +1,5 @@
+import 'dotenv/config';
+
 interface ChatMessage {
   role?: unknown;
   content?: unknown;
@@ -35,6 +37,12 @@ interface GeminiModelListResponse {
 
 const MAX_MESSAGE_LENGTH = 600;
 const MAX_HISTORY_ITEMS = 8;
+const DEFAULT_MODEL_CANDIDATES = [
+  'gemini-2.5-flash',
+  'gemini-2.0-flash',
+  'gemini-1.5-flash',
+  'gemini-1.5-pro',
+];
 const CAFE_KNOWLEDGE = `
 Cafe: Zen Cafe
 Address: Kuratoli, Kuril AIUB Gate, Dhaka, Bangladesh
@@ -74,16 +82,22 @@ const findAvailableModel = async (apiKey: string) => {
   if (!response.ok) return { model: '', status: response.status };
 
   const data = await response.json() as GeminiModelListResponse;
-  const model = data.models?.find((candidate) => (
+
+  const preferredModel = data.models?.find((candidate) => (
     typeof candidate.name === 'string' &&
     candidate.name.startsWith('models/') &&
     Array.isArray(candidate.supportedGenerationMethods) &&
-    candidate.supportedGenerationMethods.includes('generateContent') &&
-    /flash|pro/i.test(candidate.name)
+    candidate.supportedGenerationMethods.includes('generateContent')
   ));
 
+  const fallbackModel = DEFAULT_MODEL_CANDIDATES.find((candidate) =>
+    candidate.length > 0,
+  );
+
   return {
-    model: typeof model?.name === 'string' ? model.name.replace(/^models\//, '') : '',
+    model: typeof preferredModel?.name === 'string'
+      ? preferredModel.name.replace(/^models\//, '')
+      : fallbackModel || '',
     status: 200,
   };
 };

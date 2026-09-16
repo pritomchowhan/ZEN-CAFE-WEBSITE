@@ -1,3 +1,5 @@
+import 'dotenv/config';
+
 interface ContactRequest {
   name?: unknown;
   email?: unknown;
