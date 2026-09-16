@@ -89,12 +89,12 @@ export const CafeChatbot: React.FC = () => {
         >
           <header className="flex items-center justify-between bg-[#1b2317] px-5 py-4 text-[#f2ecdd]">
             <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-full bg-[#c9b089] p-1">
-                <img src="/Zen-Cafe.png" alt="Zen Cafe logo" className="h-full w-full object-contain" />
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-full border border-[#c9b089]/40 bg-[#2f3a28] transition-transform hover:scale-105">
+                <img src="/Zen-Cafe.png" alt="Zen Cafe logo" className="h-full w-full object-cover" />
               </div>
               <div>
-                <h2 className="font-serif-title text-lg">Zen Cafe Assistant</h2>
-                <p className="text-[10px] uppercase tracking-[0.16em] text-[#c9b089]">Here to help</p>
+                <h2 className="font-serif-title block text-lg font-medium tracking-[0.18em] text-[#f2ecdd]">ZEN CAFÉ</h2>
+                <p className="-mt-1 block text-[10px] font-semibold uppercase tracking-widest text-[#c9b089]">Pause. Breathe. Stay.</p>
               </div>
             </div>
             <button
